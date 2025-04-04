@@ -1,0 +1,150 @@
+/* ResetOtp.css */
+.resetotp-card {
+    max-width: 450px;
+    width: 90%;
+    margin: 3rem auto;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    background-color: #ffffff;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .resetotp-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .resetotp-container h2 {
+    color: #1a365d;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  
+  .resetotp-container p {
+    color: #4a5568;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  
+  .resetotp-container strong {
+    color: #3182ce;
+    font-weight: 700;
+    word-break: break-all;
+  }
+  
+  .resetotp-inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .resetotp-input {
+    width: 55px;
+    height: 65px;
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2d3748;
+    border: 2px solid #cbd5e0;
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    caret-color: transparent;
+  }
+  
+  .resetotp-input:hover {
+    border-color: #a0aec0;
+  }
+  
+  .resetotp-input:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .resetotp-input:not(:placeholder-shown) {
+    border-color: #3182ce;
+    background-color: #f8fafc;
+  }
+  
+  .resetotp-request {
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin-top: 1.5rem;
+  }
+  
+  .resetotp-link-button {
+    background: none;
+    border: none;
+    color: #3182ce;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .resetotp-link-button:hover {
+    color: #2c5282;
+    text-decoration: none;
+    background-color: rgba(49, 130, 206, 0.1);
+  }
+  
+  .resetotp-link-button:active {
+    transform: scale(0.98);
+  }
+  
+  /* Loading state for resend button */
+  .resetotp-link-button.loading {
+    color: #a0aec0;
+    pointer-events: none;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .resetotp-card {
+      margin: 1.5rem auto;
+      padding: 2rem 1.5rem;
+      width: 95%;
+    }
+  
+    .resetotp-container h2 {
+      font-size: 1.7rem;
+    }
+  
+    .resetotp-input {
+      width: 45px;
+      height: 55px;
+      font-size: 1.5rem;
+    }
+  
+    .resetotp-inputs {
+      gap: 0.75rem;
+    }
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+ 
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+  }

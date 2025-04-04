@@ -8,7 +8,7 @@ body {
   scroll-behavior: smooth;
 }
 header {
-  background-color: #543210; /* Pale brown */
+  background-color: #2c3e50; 
   padding: 10px 24px;
   display: flex;
   justify-content: space-between;
@@ -19,13 +19,13 @@ header {
   z-index: 50;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
-/* Desktop Navigation */
+
 .nav-menu {
   display: flex;
   align-items: center;
 }
 
-/* Navigation Links */
+
 .nav-link {
   color: white;
   text-decoration: none;
@@ -34,18 +34,13 @@ header {
 }
 
 .nav-link:hover {
-  color: rgb(214, 94, 38);
+  color: rgb(130, 120, 115);
 }
-/* Sign In & Drop Down Button (Same Styling) */
-/* General Button Styling */
-/* General Button Styling */
-/* General Button Styling */
-/* Sign In & Drop Down Button (Same Styling) */
 
-/* Sign In Button */
+
 .signin-button {
   background-color: white;
-  color: #a67c52;
+  color: #2c3e50;
   padding: 5px 5px;
   border-radius: 5px;
   font-weight: bold;
@@ -63,18 +58,45 @@ header {
 }
 
 .signin-button:hover {
-  background-color:  rgb(214, 94, 38);
+  background-color:  rgb(85, 99, 145);
   color: #fff;
 }
 
 .signin-button:active {
   transform: scale(0.95);
 }
+/* Register Button */
+.register-button {
+  background-color: #265687; /* Dark brown background */
+  color: white; /* White text */
+  padding: 5px 5px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 35px;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+}
 
-/* Drop Down Button */
+.register-button:hover {
+  background-color: #2579cc; /* Darker brown on hover */
+  color: #fff;
+}
+
+.register-button:active {
+  transform: scale(0.95);
+}
+
 .dropdown-button {
   background-color: white;
-  color: #a67c52;
+  color: #2c3e50;
   padding: 10px 20px;
   border-radius: 5px;
   font-weight: bold;
@@ -93,7 +115,7 @@ header {
 }
 
 .dropdown-button:hover {
-  background-color:  rgb(214, 94, 38);
+  background-color:  #295b8d;
   color: #fff;
 }
 
@@ -113,7 +135,7 @@ header {
   top: 60px;
   right: 10px;
   width: 220px;
-  background-color: #543210;
+  background-color: #2c3e50;
   text-align: left;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
@@ -125,7 +147,7 @@ header {
   display: block;
 }
 .dropdown-menu ul {
-  list-style: none; /* Remove bullet points */
+  list-style: none; 
   margin: 0;
   padding: 0;
 }
@@ -143,7 +165,7 @@ header {
   background-color: rgb(54, 9, 9);
 }
 
-/* Desktop View (Above 769px) */
+
 @media (min-width: 769px) {
   .nav-menu {
     display: flex;
@@ -158,7 +180,7 @@ header {
   }
 }
 
-/* Mobile View: Only Show Dropdown & Sign-in Button */
+
 @media (max-width: 768px) {
   .nav-menu {
     display: none; /* Hide desktop nav */
@@ -167,18 +189,18 @@ header {
   .mobile-menu {
     display: flex;
     align-items: center;
-    gap: 10px; /* Add spacing */
+    gap: 10px;
   }
 
-  .signin-button, .dropdown-button {
-    width: 100px; /* Same width */
-    /* Same height */
-    padding: 8px 8px; /* Uniform padding */
-    font-size: 14px; /* Adjusted font size */
+  .signin-button, .dropdown-button,.register-button {
+    width: 100px; 
+    
+    padding: 8px 8px; 
+    font-size: 14px; 
   }
 
   .dropdown-menu {
-    display: none; /* Initially hidden */
+    display: none; 
   }
 
   .dropdown-menu.open {
@@ -201,7 +223,7 @@ nav ul {
 
 
 
-/* Hero Section */
+
 .hero-section {
   background-image: url("https://www.lawnn.com/wp-content/uploads/2019/02/Top-20-Landmark-Supreme-Court-Important-Judgments-On-Labour-Law.jpg");
   background-size: cover;
@@ -258,10 +280,10 @@ nav ul {
   
   text-align: center;
   background-color: white;
-  color:  #543210;
+  color:  black;
  
-    padding: 60px 20px; /* Reduce padding to bring sections closer */
-    scroll-margin-top: 80px; /* Adjust this value based on your header height */
+    padding: 60px 20px; 
+    scroll-margin-top: 80px; 
 
   
 }
@@ -270,6 +292,7 @@ nav ul {
   font-size: 30px;
   font-weight: bold;
   margin-bottom: 30px;
+  color: #0a2b41;
 }
 
 /* Cards */
@@ -304,19 +327,18 @@ nav ul {
   margin-bottom: 12px;
 }
 
-/* About Us Section */
+
 .card h4 {
   font-size: 22px;
   font-weight: bold;
   margin-top: 10px;
 }
 
-/* Feedback Section */
 .feedback-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #f8f9fa;
+  background: #1a4774;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -336,7 +358,7 @@ nav ul {
 }
 
 .feedback-icon {
-  color: #654321;
+  color: #3498db;
   font-size: 40px;
 }
 
@@ -347,8 +369,8 @@ nav ul {
 
 .feedback-button {
   margin-top: 15px;
-  background-color: #654321;
-  color: white;
+  background-color: #3498db;
+  color: #133962;
   padding: 12px 24px;
   font-size: 16px;
   border-radius: 8px;
@@ -357,12 +379,12 @@ nav ul {
 }
 
 .feedback-button:hover {
-  background-color: #543210;
+  background-color: #75808c;
   transform: scale(1.05);
 }
 /*footer*/
 .footer {
-  background-color: #543210;
+  background-color: #2c3e50;
   color: white;
   text-align: center;
   padding: 30px 20px;
@@ -404,7 +426,6 @@ nav ul {
   margin-bottom: 10px;
 }
 
-/* Custom colors for each platform */
 .facebook { background-color: #1877f2; color: white; }
 .twitter { background-color: #1da1f2; color: white; }
 .instagram { background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); color: white; }

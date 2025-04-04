@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import "./HomeDoop.css";
+import { Link } from "react-router-dom";
 import { Upload, FileText, Download, MessageSquare, HelpCircle, BookOpen, Users, ShieldCheck, Lightbulb } from "lucide-react";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import "./HomeDoop.css";
 export default function HomeDoop() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -11,27 +12,41 @@ export default function HomeDoop() {
     <div className="min-h-screen bg-gray-100 text-gray-900">
       {/* Header */}
       <header className="bg-[#a67c52] shadow-md py-3 px-6 flex justify-between items-center fixed w-full top-0 z-50">
-        <h1 className="text-xl font-bold text-white">Legal Summarizer</h1>
+  <h1 className="text-xl font-bold text-white">LExiMinD</h1>
 
-        {/* Desktop Navigation */}
-        <nav className="nav-menu">
-          <ul className="flex space-x-6 items-center">
-            <li><a href="#HeroSection" className="nav-link">Home</a></li>
-            <li><a href="#how-it-works" className="nav-link">How It Works</a></li>
-            <li><a href="#AboutUs" className="nav-link">About Us</a></li>
-            <li><a href="#Feedback" className="nav-link">Feedback</a></li>
-            <li><a href="#signin" className="signin-button">Sign In</a></li>
-          </ul>
-        </nav>
+  {/* Desktop Navigation */}
+  <nav className="nav-menu">
+    <ul className="flex space-x-6 items-center">
+      <li><a href="#HeroSection" className="nav-link">Home</a></li>
+      <li><a href="#how-it-works" className="nav-link">How It Works</a></li>
+      <li><a href="#AboutUs" className="nav-link">About Us</a></li>
+      <li><a href="#Feedback" className="nav-link">Feedback</a></li>
+      <li>
+        <Link to="/signin" state={{ isSignIn: true }} className="signin-button">
+          Sign In
+        </Link>
+      </li>
+      <li>
+        <Link to="/signup" state={{ isSignIn: false }} className="register-button">
+          Register
+        </Link>
+      </li>
+    </ul>
+  </nav>
 
-        {/* Mobile Menu */}
-        <div className="mobile-menu">
-          <a href="#signin" className="signin-button">Sign In</a>
-          <button onClick={() => setMenuOpen(!menuOpen)} className="dropdown-button">
-            Drop Down
-          </button>
-        </div>
-      </header>
+  {/* Mobile Menu */}
+  <div className="mobile-menu">
+    <Link to="/signin" state={{ isSignIn: true }} className="signin-button">
+      Sign In
+    </Link>
+    <Link to="/signup" state={{ isSignIn: false }} className="register-button">
+      Register
+    </Link>
+    <button onClick={() => setMenuOpen(!menuOpen)} className="dropdown-button">
+      Drop Down
+    </button>
+  </div>
+</header>
 
       {/* Mobile Dropdown Menu */}
       {menuOpen && (

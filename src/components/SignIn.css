@@ -3,7 +3,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: linear-gradient(to right, #543210, #765432);
+    background: linear-gradient(to right, #072441, #16406a);
     padding: 20px;
 }
 
@@ -20,38 +20,45 @@
 .title {
     font-size: 24px;
     font-weight: bold;
-    color: #543210;
+    color: #2c3e50;
 }
 
 .subtitle {
-    color: #765432;
+    color: #2c3e50;
     margin-bottom: 20px;
 }
 
 .link {
-    color: #543210;
+    color: #2c3e50;
     text-decoration: none;
     font-weight: bold;
+}
+
+.link:hover {
+    text-decoration: underline;
 }
 
 .form {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .form-group {
+    width: 100%;
     text-align: left;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
+    max-width: 350px;
 }
 
 label {
-    display: block;
+    align-self: flex-start;
     font-weight: bold;
-    color: #543210;
+    color: #2c3e50;
 }
 
 .input {
@@ -59,41 +66,44 @@ label {
     max-width: 350px;
     padding: 12px;
     margin-top: 5px;
-    border: 1px solid #543210;
+    border: 1px solid #2c3e50;
     border-radius: 8px;
     transition: 0.3s;
-    text-align: center;
+    text-align: left;
     font-size: 16px;
 }
 
 .input:focus {
-    border-color: #765432;
+    border-color: #6088b0;
     outline: none;
     box-shadow: 0 0 5px rgba(84, 50, 16, 0.3);
 }
 
 .input-wrapper {
     position: relative;
+    width: 100%;
+    max-width: 350px;
 }
 
 .eye-icon {
     position: absolute;
-    right: 10px;
-    top: 50%;
+    right: 0px;
+    top: 53%;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
-    color: #543210;
-}
-
-.forgot-password {
-    text-align: right;
-    margin-bottom: 15px;
+    color: #2c3e50;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .submit-btn {
-    background: #543210;
+    width: 90%;
+    max-width: 300px;
+    background: #2c3e50;
     color: white;
     padding: 12px;
     border: none;
@@ -105,5 +115,57 @@ label {
 }
 
 .submit-btn:hover {
-    background: #402108;
+    background: #3a6a99;
+}
+
+.social-btn {
+    width: 90%;
+    max-width: 300px;
+    background: white;
+    color: #4b8fd3;
+    padding: 12px;
+    border: 1px solid #376a9d;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px auto;
+}
+
+.social-btn:hover {
+    background: #f5f5f5;
+}
+
+.google-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.forgot-password .link {
+    color: #0e345b;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.forgot-password .link:hover {
+    color: #2c3e50;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 2px;
+    margin-bottom: 0;
 }

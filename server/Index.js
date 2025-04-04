@@ -1,43 +1,61 @@
-import express from 'express';
-import jwt from 'jsonwebtoken';
-import cors from 'cors';
-import nodemailer from 'nodemailer';
-import session from 'express-session';
-import passport from 'passport';
-import { Strategy as OAuth2Strategy } from 'passport-google-oauth2';
-import dotenv from 'dotenv';
-import bodyParser from 'body-parser';
-//import AuthRouter from './Routes/AuthRouter.js';
-import UserModel from './Models/User.js';
-import SearchHistory from './Models/History.models.js';
-import FeedbackSchema from './Models/Feedback.js';
-//import { v2 as cloudinaryV2 } from 'cloudinary';
-//import verifyToken from './middlewares/verifyToken.js';
-import multer from 'multer';
-import bcrypt from 'bcrypt';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-//import DataUriParser from 'datauri/parser';
-import path from 'path';
-import cron from 'node-cron';
-import crypto from 'crypto';
-import './Models/db.js';
-import pkg from 'cloudinary';
-const { v2: cloudinaryV2 } = pkg;
-// Initialize environment variables
-dotenv.config();
-
-
-// Initialize express app
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const session = require("express-session");
+const passport = require("passport");
+const authRoutes = require("./routes/UserRoutes");
+const nodemailer = require("nodemailer");
 const app = express();
-app.use(express.json());
-//app.use('/auth' ,AuthRouter);
 
-// Middleware configurations
+// Middleware
+app.use(express.json());
 app.use(cors({
   origin: "http://localhost:3000",
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  //allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
 }));
+app.use(session({
+  secret: process.env.JWT_SECRET || "secret-123",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: "lax",
+    httpOnly: true,
+  },
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.use(bodyParser.json());
+// Mount routes
+app.use("/auth", authRoutes);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+transporter.sendMail({
+  from: process.env.EMAIL_USER,
+  to: "test@example.com", // Replace with your email for testing
+  subject: "Test Email",
+  text: "This is a test email from Nodemailer!",
+}, (err, info) => {
+  if (err) {
+    console.error("Email sending error:", err);
+  } else {
+    console.log("Email sent:", info.response);
+  }
+});
+
+// MongoDB connection
+mongoose.connect(process.env.MONGO_CONN)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

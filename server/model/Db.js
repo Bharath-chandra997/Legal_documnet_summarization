@@ -1,14 +1,9 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-
-// Load environment variables from a .env file (if you're using one)
 dotenv.config();
-
 const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGO_CONN;
-
-    // Check if MONGO_CONN is undefined
     if (!mongoURI) {
       throw new Error('MongoDB connection URI is not defined in the environment variables');
     }
@@ -21,11 +16,9 @@ const connectDB = async () => {
     console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error.message);
-    process.exit(1); // Exit process if connection fails
+    process.exit(1);
   }
 };
-
-// Explicitly call connectDB if needed at module load
 connectDB();
 
 export default connectDB;

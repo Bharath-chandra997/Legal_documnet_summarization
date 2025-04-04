@@ -1,96 +1,324 @@
-require("dotenv").config(); // Load environment variables
-const bcrypt = require("bcrypt");
+require("dotenv").config();
+const User = require("../model/User");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const { getNextSequenceValue } = require("../models/counter");
+const passport = require("passport");
+const { Strategy: OAuth2Strategy } = require("passport-google-oauth2");
+const nodemailer = require("nodemailer");
 
-// Load secret from environment variable
-const JWT_SECRET = process.env.JWT_SECRET || "your_default_jwt_secret";
+// Validate environment variables
+if (!process.env.CLIENT_ID) throw new Error("CLIENT_ID is not defined in .env");
+if (!process.env.CLIENT_SECRET) throw new Error("CLIENT_SECRET is not defined in .env");
+if (!process.env.CLIENT_URL) throw new Error("CLIENT_URL is not defined in .env");
+if (!process.env.EMAIL_USER) throw new Error("EMAIL_USER is not defined in .env");
+if (!process.env.EMAIL_PASS) throw new Error("EMAIL_PASS is not defined in .env");
 
-// Register a new user
-const registerUser = async (req, res) => {
-  const { username, email, password, location } = req.body;
+// Log configuration
+console.log("CLIENT_ID:", process.env.CLIENT_ID);
+console.log("CLIENT_SECRET:", process.env.CLIENT_SECRET);
+console.log("Callback URL:", "http://localhost:8080/auth/google/callback");
 
-  try {
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+// Email transporter setup
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // Must be an App Password
+  },
+});
+
+// Configure Google OAuth Strategy (unchanged)
+passport.use(
+  new OAuth2Strategy(
+    {
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: "http://localhost:8080/auth/google/callback",
+      scope: ["profile", "email"],
+      prompt: "select_account",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        console.log("Google OAuth - Access Token:", accessToken);
+        console.log("Google OAuth - Profile:", profile);
+        const email = profile.emails[0].value;
+        let user = await User.findOne({ email });
+
+        if (!user) {
+          user = new User({
+            username: profile.displayName,
+            email,
+            image: profile.photos[0].value,
+            isVerified: true, // Google users are auto-verified
+          });
+          await user.save();
+          console.log("Google OAuth - Created new user:", email);
+        } else {
+          console.log("Google OAuth - User exists:", email);
+        }
+        return done(null, user);
+      } catch (error) {
+        console.error("Google OAuth - Callback Error:", error);
+        return done(error, null);
+      }
     }
+  )
+);
 
-    // Get the next user_id using the auto-increment logic
-    const user_id = await getNextSequenceValue("user_id");
+// Serialize/deserialize user (unchanged)
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new user
-    const newUser = new User({
-      user_id,
-      username,
-      email,
-      password: hashedPassword,
-      location
-    });
-    await newUser.save();
-
-    // Generate JWT token after user registration
-    const token = jwt.sign(
-      { user_id: newUser.user_id, username: newUser.username},
-      JWT_SECRET,
-      { expiresIn: "1h" } // Token expires in 1 hour
-    );
-
-    // Respond with success message, token, and user data
-    res.status(201).json({
-      message: "User registered successfully",
-      token, // Send the JWT token
-      user: { user_id: newUser.user_id, username: newUser.username, location: newUser.location ,user_type:newUser.user_type},
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error registering user", error });
-  }
+// Generate OTP (unchanged)
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
 };
 
-// Login user
-const loginUser = async (req, res) => {
-  const { username, password } = req.body;
+// Send OTP email (unchanged)
+const sendOTP = async (email, otp) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Your OTP for Signup Verification",
+    text: `Your OTP is ${otp}. It expires in 5 minutes.`,
+  };
+  await transporter.sendMail(mailOptions);
+  console.log("OTP sent to:", email);
+};
 
+
+const resetPassword = async (req, res) => {
   try {
-    // Validate input
-    if (!username || !password) {
-      return res.status(400).json({ message: "Username and password are required" });
+    const { token } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    user.password = req.body.password;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "Token expired" });
+    }
+    res.status(500).json({ error: "Server error" });
+  }
+};
+const signup = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    let user = await User.findOne({ email });
+    if (user && user.isVerified) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    const otp = generateOTP();
+    if (user) {
+      // Update existing unverified user
+      user.username = username;
+      user.password = password; // Will be hashed by pre-save
+      user.otp_verification = otp;
+      user.otpExpiresAt = Date.now() + 5 * 60 * 1000;
+    } else {
+      // Create new pending user
+      user = new User({
+        username,
+        email,
+        password, // Will be hashed by pre-save
+        otp_verification: otp,
+        otpExpiresAt: Date.now() + 5 * 60 * 1000,
+        isVerified: false,
+      });
+    }
+    await user.save();
+
+    await sendOTP(email, otp);
+    console.log("Signup initiated, OTP sent:", email);
+    res.status(201).json({ message: "OTP sent, please verify", email });
+  } catch (error) {
+    console.error("Signup error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+const requestNewOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
 
     // Check if user exists
-    const user = await User.findOne({ username });
     if (!user) {
-      return res.status(401).json({ message: "Invalid username or password" });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid username or password" });
+    // Check if user is already verified
+    if (user.isVerified) {
+      return res.status(400).json({ error: "User is already verified" });
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { user_id: user.user_id, username: user.username },
-      JWT_SECRET,
-      { expiresIn: "1h" } // Token expires in 1 hour
-    );
+    // Generate new OTP and set expiration (5 minutes)
+    const otp = generateOTP();
+    user.otp_verification = otp;
+    user.otpExpiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes in milliseconds
+    await user.save();
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: { user_id: user.user_id, username: user.username, location: user.location,user_type:user.user_type },
-    });
+    // Send the new OTP to the user's email
+    await sendOTP(email, otp);
+
+    res.json({ message: "New OTP sent to your email" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error logging in", error });
+    console.error("Request new OTP error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-module.exports = { registerUser, loginUser };
+// Verify OTP (unchanged)
+const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user || user.otp_verification !== otp || Date.now() > user.otpExpiresAt) {
+      return res.status(400).json({ error: "Invalid or expired OTP" });
+    }
+
+    // Finalize signup: mark as verified and clear OTP
+    user.otp_verification = otp;
+    user.otpExpiresAt = Date.now() + 5 * 60 * 1000;
+    user.isVerified = true;
+    await user.save();
+
+    const token = jwt.sign({ username: user.username, email }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    console.log("OTP verified, user fully registered:", email);
+    res.json({ message: "Signup completed", token, email });
+  } catch (error) {
+    console.error("OTP verification error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+// controler/UserControler.js
+const verifyResetOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ 
+      email,
+      resetOtp: otp,
+      resetotpExpiresAt: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired OTP" });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    // Clear the OTP after successful verification
+    user.resetOtp = undefined;
+    user.resetotpExpiresAt = undefined;
+    await user.save();
+
+    res.json({ token });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Signin (unchanged)
+const signin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !user.isVerified) {
+      console.error("User does not exist or is not verified:", email);
+      return res.status(404).json({ error: "User does not exist or is not verified. Please sign up and verify." });
+    }
+    if (!(await user.comparePassword(password))) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+    const token = jwt.sign({ username: user.username, email }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    console.log("Signin successful:", email);
+    res.json({ message: "Sign in successful", token, email });
+  } catch (error) {
+    console.error("Signin error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Google Auth (unchanged)
+const googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+  prompt: "select_account",
+});
+
+// Google Callback (unchanged)
+const googleCallback = async (req, res) => {
+  if (!req.user) {
+    console.error("Google OAuth - No user authenticated");
+    return res.redirect(`${process.env.CLIENT_URL}/signup?status=error`);
+  }
+
+  const { username, email } = req.user;
+  const token = jwt.sign({ username, email }, process.env.JWT_SECRET, { expiresIn: "24h" });
+  console.log("Google OAuth - Redirecting to Dash with:", email);
+  res.redirect(`${process.env.CLIENT_URL}?token=${token}&email=${email}`);
+};
+
+// Get Me (unchanged)
+const getMe = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({ email: decoded.email });
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ username: user.username, email: user.email, image: user.image });
+  } catch (err) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+};
+
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !user.isVerified) {
+      return res.status(404).json({ error: "User not found or not verified" });
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+    user.resetOtp = otp;
+    user.resetotpExpiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes expiration
+    await user.save();
+
+    // Send OTP email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Password Reset OTP",
+      text: `Your OTP for password reset is ${otp}. It expires in 5 minutes.`,
+    };
+    await transporter.sendMail(mailOptions);
+
+    res.json({ message: "OTP sent to your email" });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+module.exports = { 
+  signup, 
+  signin, 
+  googleAuth, 
+  googleCallback, 
+  getMe, 
+  verifyOTP, 
+  forgotPassword, 
+  resetPassword ,verifyResetOtp,requestNewOtp
+};
