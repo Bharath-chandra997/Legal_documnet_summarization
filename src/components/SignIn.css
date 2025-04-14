@@ -1,4 +1,4 @@
-.container {
+.signin-container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7,7 +7,7 @@
     padding: 20px;
 }
 
-.form-box {
+.signin-form-box {
     background: white;
     padding: 2rem;
     border-radius: 12px;
@@ -17,34 +17,34 @@
     text-align: center;
 }
 
-.title {
+.signin-title {
     font-size: 24px;
     font-weight: bold;
     color: #2c3e50;
 }
 
-.subtitle {
+.signin-subtitle {
     color: #2c3e50;
     margin-bottom: 20px;
 }
 
-.link {
+.signin-link {
     color: #2c3e50;
     text-decoration: none;
     font-weight: bold;
 }
 
-.link:hover {
+.signin-link:hover {
     text-decoration: underline;
 }
 
-.form {
+.signin-form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.form-group {
+.signin-form-group {
     width: 100%;
     text-align: left;
     margin-bottom: 10px;
@@ -55,13 +55,13 @@
     max-width: 350px;
 }
 
-label {
+.signin-label {
     align-self: flex-start;
     font-weight: bold;
     color: #2c3e50;
 }
 
-.input {
+.signin-input {
     width: 100%;
     max-width: 350px;
     padding: 12px;
@@ -73,19 +73,19 @@ label {
     font-size: 16px;
 }
 
-.input:focus {
+.signin-input:focus {
     border-color: #6088b0;
     outline: none;
     box-shadow: 0 0 5px rgba(84, 50, 16, 0.3);
 }
 
-.input-wrapper {
+.signin-input-wrapper {
     position: relative;
     width: 100%;
     max-width: 350px;
 }
 
-.eye-icon {
+.signin-eye-icon {
     position: absolute;
     right: 0px;
     top: 53%;
@@ -98,9 +98,10 @@ label {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 10px;
 }
 
-.submit-btn {
+.signin-submit-btn {
     width: 90%;
     max-width: 300px;
     background: #2c3e50;
@@ -114,11 +115,37 @@ label {
     transition: background 0.3s;
 }
 
-.submit-btn:hover {
+.signin-submit-btn:hover:not(:disabled) {
     background: #3a6a99;
 }
 
-.social-btn {
+.signin-submit-btn:disabled {
+    opacity: 0.8;
+}
+
+.signin-loading-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.signin-loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.signin-social-btn {
     width: 90%;
     max-width: 300px;
     background: white;
@@ -137,33 +164,33 @@ label {
     margin: 20px auto;
 }
 
-.social-btn:hover {
+.signin-social-btn:hover {
     background: #f5f5f5;
 }
 
-.google-btn svg {
+.signin-google-btn svg {
     width: 24px;
     height: 24px;
 }
 
-.forgot-password {
+.signin-forgot-password {
     text-align: center;
     margin-top: 20px;
     font-size: 14px;
     color: #666;
 }
 
-.forgot-password .link {
+.signin-forgot-password .signin-link {
     color: #0e345b;
     cursor: pointer;
     text-decoration: underline;
 }
 
-.forgot-password .link:hover {
+.signin-forgot-password .signin-link:hover {
     color: #2c3e50;
 }
 
-.error {
+.signin-error {
     color: red;
     font-size: 14px;
     margin-top: 2px;

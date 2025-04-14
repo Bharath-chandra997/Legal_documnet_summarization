@@ -58,7 +58,6 @@ const ForgetPassword = () => {
         });
       }
     } catch (error) {
-      console.error("Error:", error);
       toast.error("Network error. Please try again.", {
         position: "top-right",
         autoClose: 5000,
@@ -75,7 +74,6 @@ const ForgetPassword = () => {
 
   return (
     <div className="forgot-password-container">
-      {/* Toast Container */}
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -89,7 +87,6 @@ const ForgetPassword = () => {
       />
       
       <div className="forgetcard">
-        {/* Image container - will only show on desktop */}
         <div className="forgetimage-container"></div>
         
         <div className="forgetform-container">

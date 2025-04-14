@@ -1,0 +1,218 @@
+.admindashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.admindashboard-header {
+  background: linear-gradient(90deg, #2c3e50, #4ca1af);
+  color: white;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.admindashboard-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admindashboard-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.admindashboard-content {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.admindashboard-stats-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.admindashboard-stats-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.admindashboard-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admindashboard-card-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.admindashboard-chart-toggle {
+  display: flex;
+  gap: 0.5rem;
+  background: #f0f4f8;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.admindashboard-chart-toggle button {
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: #4a5568;
+}
+
+.admindashboard-chart-toggle button.active {
+  background: #2c3e50;
+  color: white;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2);
+}
+
+.admindashboard-chart-toggle button:hover:not(.active) {
+  background: rgba(44, 62, 80, 0.1);
+}
+
+.admindashboard-date-controls {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.admindashboard-date-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.admindashboard-date-input label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.admindashboard-date-input input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.admindashboard-date-input input:focus {
+  outline: none;
+  border-color: #4ca1af;
+  box-shadow: 0 0 0 3px rgba(76, 161, 175, 0.2);
+}
+
+.admindashboard-chart-container {
+  height: 500px;
+  position: relative;
+  margin-top: 1rem;
+}
+
+.admindashboard-no-data {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #718096;
+  font-size: 1.1rem;
+}
+
+button {
+  transition: all 0.3s ease;
+}
+
+.admindashboard-logout-btn {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.admindashboard-logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+}
+
+.admindashboard-refresh-btn {
+  background: linear-gradient(90deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  min-width: 150px;
+}
+
+.admindashboard-refresh-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+}
+
+.admindashboard-refresh-btn:disabled {
+  background: #a0aec0;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .admindashboard-header {
+    padding: 1rem;
+  }
+  
+  .admindashboard-header-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .admindashboard-content {
+    padding: 0 1rem;
+  }
+  
+  .admindashboard-stats-card {
+    padding: 1.5rem;
+  }
+  
+  .admindashboard-date-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .admindashboard-date-input {
+    width: 100%;
+  }
+  
+  .admindashboard-chart-container {
+    height: 400px;
+  }
+}

@@ -1,39 +1,77 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import './Error.css'; // Import the CSS file
 
 function Error() {
   const navigate = useNavigate();
 
-  const styles = {
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh', // Full viewport height to center vertically
-      textAlign: 'center',
-    },
-    heading: {
-      color: 'red',
-      marginBottom: '20px', // Space between heading and button
-    },
-    button: {
-      padding: '10px 20px',
-      fontSize: '16px',
-      cursor: 'pointer',
-      backgroundColor: '#a67c52',
-      color: 'white',
-      border: 'none',
-      borderRadius: '5px',
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Error: Page not found 404</h1>
-      <button style={styles.button} onClick={() => navigate('/')}>
-        Go to Home
-      </button>
+    <div className="error-container">
+      {/* Floating background elements */}
+      <motion.div
+        className="floating-circle circle-1"
+        animate={{
+          y: [0, 20, 0],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+      
+      <motion.div
+        className="floating-circle circle-2"
+        animate={{
+          y: [0, -30, 0],
+          scale: [1, 1.05, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: 1,
+        }}
+      />
+
+      {/* Main content */}
+      <motion.div
+        className="error-content"
+        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, type: 'spring' }}
+      >
+        <motion.img
+          className="error-image"
+          src="https://cdn-icons-png.flaticon.com/512/755/755014.png"
+          alt="Error"
+          animate={{
+            rotate: [0, 10, -10, 10, 0],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 3,
+          }}
+        />
+        <h1 className="error-heading">404 - Page Not Found</h1>
+        <p className="error-subheading">
+          Oops! The page you're looking for doesn't exist or has been moved.
+        </p>
+        <motion.button
+          className="error-button"
+          onClick={() => navigate('/')}
+          whileHover={{
+            scale: 1.05,
+            backgroundColor: '#3a5a80',
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Go to Home
+        </motion.button>
+      </motion.div>
     </div>
   );
 }

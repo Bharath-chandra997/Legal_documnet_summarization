@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./SignIn.css";
+import { jwtDecode } from "jwt-decode";
 
 const GoogleIcon = () => (
   <svg
@@ -25,37 +26,22 @@ export default function SignIn() {
   const location = useLocation();
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
     const emailParam = params.get("email");
     if (token && emailParam) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("email", emailParam);
-      console.log("Google signin successful, redirecting to Dash with email:", emailParam);
-      navigate("/Dash");
-    }
-  }, [location, navigate]);
-
-  const onSubmit = async (data) => {
-    try {
-      const response = await fetch("http://localhost:8080/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        console.log("Signin successful:", result);
-        localStorage.setItem("token", result.token);
-        localStorage.setItem("email", result.email);
-       
-        navigate("/Dash");
-      } else {
-        console.error("Signin failed:", result.error);
-        toast.error("Signin failed", {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+      try {
+        const decoded = jwtDecode(token);
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", emailParam);
+        navigate(decoded.isAdmin ? "/admin/dashboard" : "/Dash", { replace: true });
+      } catch (error) {
+        toast.error("Google signin failed. Please try again.", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -64,13 +50,43 @@ export default function SignIn() {
           draggable: true,
           progress: undefined,
         });
-        
+      }
+    }
+  }, [location, navigate]);
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+
+      const response = await fetch("http://localhost:8080/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        localStorage.setItem("token", result.token);
+        localStorage.setItem("email", result.email);
+        navigate(result.isAdmin ? "/admin/dashboard" : "/Dash", { replace: true });
+      } else {
+        toast.error(result.error || "Signin failed", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
         if (result.error === "User does not exist. Please sign up.") {
-          setTimeout(() => navigate("/signup"), 3000);
+          setTimeout(() => navigate("/signup", { replace: true }), 3000);
         }
       }
     } catch (error) {
-      console.error("Error during signin:", error);
       toast.error("Error during signin. Please try again.", {
         position: "top-right",
         autoClose: 5000,
@@ -80,6 +96,8 @@ export default function SignIn() {
         draggable: true,
         progress: undefined,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -88,12 +106,11 @@ export default function SignIn() {
   };
 
   const handleForgotPassword = () => {
-    navigate("/ForgetPassward");
+    navigate("/ForgetPassward", { replace: true });
   };
 
   return (
-    <div className="container">
-      {/* Add ToastContainer at the root level */}
+    <div className="signin-container">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -106,57 +123,66 @@ export default function SignIn() {
         pauseOnHover
       />
       
-      <div className="form-box">
-        <h2 className="title">Sign in</h2>
-        <p className="subtitle">
+      <div className="signin-form-box">
+        <h2 className="signin-title">Sign in</h2>
+        <p className="signin-subtitle">
           Welcome back! Don't have an account?{" "}
-          <span className="link" onClick={() => navigate("/signup")}>
+          <span className="signin-link" onClick={() => navigate("/signup", { replace: true })}>
             Sign up
           </span>
         </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="form">
-          <div className="form-group">
-            <label>Email address</label>
-            <div className="input-wrapper">
+        <form onSubmit={handleSubmit(onSubmit)} className="signin-form">
+          <div className="signin-form-group">
+            <label className="signin-label">Email address</label>
+            <div className="signin-input-wrapper">
               <input
                 type="email"
                 {...register("email", { required: "Email is required" })}
-                className="input"
+                className="signin-input"
               />
             </div>
-            {errors.email && <p className="error">{errors.email.message}</p>}
+            {errors.email && <p className="signin-error">{errors.email.message}</p>}
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <div className="input-wrapper">
+          <div className="signin-form-group">
+            <label className="signin-label">Password</label>
+            <div className="signin-input-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password", { required: "Password is required" })}
-                className="input"
+                className="signin-input"
               />
               <button
                 type="button"
-                className="eye-icon"
+                className="signin-eye-icon"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            {errors.password && <p className="error">{errors.password.message}</p>}
+            {errors.password && <p className="signin-error">{errors.password.message}</p>}
           </div>
 
-          <button type="submit" className="submit-btn">Sign in</button>
+          <button type="submit" className="signin-submit-btn" disabled={isLoading}>
+            {isLoading ? (
+              <div className="signin-loading-content">
+                <div className="signin-loading-spinner"></div>
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              "Sign in"
+            )}
+          </button>
         </form>
 
-        <button className="social-btn google-btn" onClick={handleGoogleSignIn}>
+        <button className="signin-social-btn signin-google-btn" onClick={handleGoogleSignIn}>
           <GoogleIcon /> Sign in with Google
         </button>
 
-        <p className="forgot-password">
+        <p className="signin-forgot-password">
           Forgot your password?{" "}
-          <span className="link" onClick={handleForgotPassword}>
+          <span className="signin-link" onClick={handleForgotPassword}>
             Reset it
           </span>
         </p>

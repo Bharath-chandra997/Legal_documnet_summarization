@@ -7,10 +7,11 @@ import "./ResetPassword.css";
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check token existence and expiry on component mount
     const token = localStorage.getItem("resetToken");
     const expiry = localStorage.getItem("tokenExpiry");
     
@@ -21,24 +22,36 @@ const ResetPassword = () => {
       toast.error("Session expired. Please request a new OTP.", {
         position: "top-right",
         autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
       });
       setTimeout(() => navigate("/forgot-password"), 3000);
     }
   }, [navigate]);
 
+  const validatePassword = (pass) => {
+    if (pass.length < 7) {
+      setPasswordError("Password must be at least 7 characters");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
+  const validateConfirmPassword = (confirmPass) => {
+    if (confirmPass !== password) {
+      setConfirmPasswordError("Passwords don't match");
+      return false;
+    }
+    setConfirmPasswordError("");
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (password !== confirmPassword) {
-      toast.error("Passwords don't match!", {
-        position: "top-right",
-        autoClose: 5000,
-      });
+    const isPasswordValid = validatePassword(password);
+    const isConfirmPasswordValid = validateConfirmPassword(confirmPassword);
+    
+    if (!isPasswordValid || !isConfirmPasswordValid) {
       return;
     }
 
@@ -55,80 +68,62 @@ const ResetPassword = () => {
         localStorage.removeItem("resetToken");
         localStorage.removeItem("tokenExpiry");
         localStorage.removeItem("resetEmail");
-        toast.success("Password reset successful! Redirecting to signin...", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
+        toast.success("Password reset successful! Redirecting...", {
           onClose: () => navigate("/signin")
         });
       } else {
         const error = await response.json();
-        toast.error(error.message || "Password reset failed", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast.error(error.message || "Password reset failed");
       }
     } catch (err) {
-      toast.error("Network error. Please try again.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      toast.error("Network error. Please try again.");
     }
   };
 
   return (
     <div className="reset-password-container">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <ToastContainer />
       
       <div className="resetforgotcard">
         <div className="resetforgotform-container">
           <h1 className='resetforgotheadingH1'>Reset Password</h1>
-          <p>Enter your new password below.</p>
+          <p>Enter your new password (minimum 7 characters)</p>
+          
           <div className="resetforgotinput-container">
             <input 
               type="password" 
               placeholder="New password" 
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                validatePassword(e.target.value);
+                if (confirmPassword) validateConfirmPassword(confirmPassword);
+              }}
               required
+              minLength="7"
             />
+            {passwordError && <div className="error-message">{passwordError}</div>}
           </div>
+          
           <div className="resetforgotinput-container">
             <input 
               type="password" 
               placeholder="Confirm new password" 
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                validateConfirmPassword(e.target.value);
+              }}
               required
+              minLength="7"
             />
+            {confirmPasswordError && <div className="error-message">{confirmPasswordError}</div>}
           </div>
+          
           <button 
             className="resetforgotreset-button" 
             onClick={handleSubmit}
+            disabled={passwordError || confirmPasswordError || password.length < 7}
           >
             Reset Password
           </button>

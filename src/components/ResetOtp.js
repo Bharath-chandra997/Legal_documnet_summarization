@@ -7,6 +7,8 @@ import "./ResetOtp.css";
 const ResetOtp = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [email, setEmail] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const inputRefs = useRef([]);
@@ -19,7 +21,6 @@ const ResetOtp = () => {
     }
     setEmail(resetEmail);
     localStorage.setItem("resetEmail", resetEmail);
-    // Focus first input on mount
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
@@ -32,28 +33,23 @@ const ResetOtp = () => {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input when a digit is entered
     if (value && index < 5) {
       inputRefs.current[index + 1].focus();
     }
 
-    // Auto-submit when all digits are entered
     if (newOtp.every(digit => digit !== "")) {
       verifyOtp(newOtp.join(""));
     }
   };
 
   const handleKeyDown = (index, e) => {
-    // Handle backspace
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1].focus();
     }
-    // Handle left arrow
     if (e.key === 'ArrowLeft' && index > 0) {
       e.preventDefault();
       inputRefs.current[index - 1].focus();
     }
-    // Handle right arrow
     if (e.key === 'ArrowRight' && index < 5) {
       e.preventDefault();
       inputRefs.current[index + 1].focus();
@@ -72,6 +68,7 @@ const ResetOtp = () => {
 
   const verifyOtp = async (fullOtp) => {
     try {
+      setIsVerifying(true);
       const response = await fetch("http://localhost:8080/auth/verify-reset-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -91,7 +88,6 @@ const ResetOtp = () => {
           position: "top-right",
           autoClose: 5000,
         });
-        // Clear all inputs and focus first one on error
         setOtp(["", "", "", "", "", ""]);
         inputRefs.current[0].focus();
       }
@@ -100,11 +96,14 @@ const ResetOtp = () => {
         position: "top-right",
         autoClose: 5000,
       });
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   const resendOtp = async () => {
     try {
+      setIsResending(true);
       const response = await fetch("http://localhost:8080/auth/ForgetPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -116,7 +115,6 @@ const ResetOtp = () => {
           position: "top-right",
           autoClose: 3000,
         });
-        // Clear inputs and focus first one when resending
         setOtp(["", "", "", "", "", ""]);
         inputRefs.current[0].focus();
       } else {
@@ -131,55 +129,82 @@ const ResetOtp = () => {
         position: "top-right",
         autoClose: 5000,
       });
+    } finally {
+      setIsResending(false);
     }
   };
 
   return (
-    <div className="otp-card">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      
-      <div className="otp-container">
-        <h2>Password Reset Verification</h2>
-        <p>Enter the OTP sent to <strong>{email}</strong></p>
+    <div className="resetotp-page-wrapper">
+      <div className="resetotp-card">
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         
-        <div className="otp-inputs" onPaste={handlePaste}>
-          {otp.map((digit, index) => (
-            <input
-              key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
-              id={`reset-otp-input-${index}`}
-              type="text"
-              inputMode="numeric"
-              maxLength="1"
-              value={digit}
-              onChange={(e) => handleChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              className="otp-input"
-              autoFocus={index === 0}
-            />
-          ))}
-        </div>
+        <div className="resetotp-container">
+          <h2 className="resetotp-title">Password Reset Verification</h2>
+          <p className="resetotp-subtitle">Enter the OTP sent to <strong className="resetotp-email">{email}</strong></p>
+          
+          <div className="resetotp-inputs" onPaste={handlePaste}>
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
+                id={`resetotp-input-${index}`}
+                type="text"
+                inputMode="numeric"
+                maxLength="1"
+                value={digit}
+                onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                className={`resetotp-input ${isVerifying ? 'resetotp-input-loading' : ''}`}
+                autoFocus={index === 0}
+                disabled={isVerifying}
+              />
+            ))}
+          </div>
 
-        <p className="otp-request">
-          Didn't receive code?{" "}
-          <span 
-            className="resend-link"
-            style={{ color: "blue", cursor: "pointer" }} 
-            onClick={resendOtp}
-          >
-            Request again
-          </span>
-        </p>
+          {isVerifying && (
+            <div className="resetotp-loading-spinner">
+              <div className="resetotp-spinner-dot"></div>
+              <div className="resetotp-spinner-dot"></div>
+              <div className="resetotp-spinner-dot"></div>
+            </div>
+          )}
+
+          <p className="resetotp-request">
+            Didn't receive code?{" "}
+            <button 
+              className={`resetotp-resend-link ${isResending ? 'resetotp-resend-loading' : ''}`}
+              onClick={resendOtp}
+              disabled={isResending}
+            >
+              {isResending ? (
+                <>
+                  <span className="resetotp-resend-spinner"></span>
+                  Sending...
+                </>
+              ) : (
+                "Request again"
+              )}
+            </button>
+          </p>
+
+          <p className="resetotp-spam-note">
+            <svg className="resetotp-spam-icon" viewBox="0 0 24 24" width="16" height="16">
+              <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            If you don't see the email, please check your spam folder.
+          </p>
+        </div>
       </div>
     </div>
   );

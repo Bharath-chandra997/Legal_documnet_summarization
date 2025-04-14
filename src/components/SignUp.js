@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./SignUp.css";
+import { jwtDecode } from "jwt-decode";
 
 const GoogleIcon = () => (
   <svg
@@ -23,8 +24,10 @@ const GoogleIcon = () => (
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const password = watch("password", "");
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -32,22 +35,40 @@ export default function SignUp() {
     const email = params.get("email");
 
     if (token && email) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("email", email);
-      toast.success("Google signup successful! Redirecting...", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      setTimeout(() => navigate("/Dash"), 3000);
+      localStorage.removeItem("token");
+      localStorage.removeItem("email");
+      try {
+        const decoded = jwtDecode(token);
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", email);
+        toast.success("Google signup successful! Redirecting...", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setTimeout(() => {
+          navigate(decoded.isAdmin ? "/admin/dashboard" : "/Dash", { replace: true });
+        }, 3000);
+      } catch (error) {
+        toast.error("Google signup failed. Please try again.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
     }
   }, [location, navigate]);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const response = await fetch("http://localhost:8080/auth/signup", {
         method: "POST",
@@ -57,13 +78,14 @@ export default function SignUp() {
 
       const result = await response.json();
       if (response.ok) {
-        console.log("Signup initiated:", result);
         localStorage.setItem("email", result.email);
-        navigate("/otp");
+        navigate("/otp", { replace: true });
       } else {
-        console.error("Signup failed:", result.error);
-        if (result.error.includes("already exist")) {
-          toast.error("User already exists. Please sign in instead.", {
+        toast.error(
+          result.error.includes("already exist") 
+            ? "User already exists. Please sign in instead." 
+            : result.error || "Signup failed. Please try again.",
+          {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -71,21 +93,10 @@ export default function SignUp() {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-          });
-        } else {
-          toast.error(result.error || "Signup failed. Please try again.", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        }
+          }
+        );
       }
     } catch (error) {
-      console.error("Error during signup:", error);
       toast.error("Error during signup. Please try again.", {
         position: "top-right",
         autoClose: 5000,
@@ -95,6 +106,8 @@ export default function SignUp() {
         draggable: true,
         progress: undefined,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -103,8 +116,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="container">
-      {/* Toast Container */}
+    <div className="signup-container">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -117,70 +129,102 @@ export default function SignUp() {
         pauseOnHover
       />
       
-      <div className="form-box">
-        <h2 className="title">Sign up</h2>
-        <p className="subtitle">
+      <div className="signup-form-box">
+        <h2 className="signup-title">Sign up</h2>
+        <p className="signup-subtitle">
           Already have an account?{" "}
-          <span className="link" onClick={() => navigate("/signin")}>
+          <span className="signup-link" onClick={() => navigate("/signin", { replace: true })}>
             Sign in
           </span>
         </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="form">
-          <div className="form-group">
-            <label>Email address</label>
-            <div className="input-wrapper">
+        <form onSubmit={handleSubmit(onSubmit)} className="signup-form">
+          <div className="signup-form-group">
+            <label className="signup-label">Email address</label>
+            <div className="signup-input-wrapper">
               <input
                 type="email"
-                {...register("email", { required: "Email is required" })}
-                className="input"
+                {...register("email", { 
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
+                className="signup-input"
               />
             </div>
-            {errors.email && <p className="error">{errors.email.message}</p>}
+            {errors.email && <p className="signup-error">{errors.email.message}</p>}
           </div>
 
-          <div className="form-group">
-            <label>Username</label>
-            <div className="input-wrapper">
+          <div className="signup-form-group">
+            <label className="signup-label">Username</label>
+            <div className="signup-input-wrapper">
               <input
                 type="text"
-                {...register("username", { required: "Username is required" })}
-                className="input"
+                {...register("username", { 
+                  required: "Username is required",
+                  minLength: {
+                    value: 3,
+                    message: "Username must be at least 3 characters"
+                  }
+                })}
+                className="signup-input"
               />
             </div>
-            {errors.username && <p className="error">{errors.username.message}</p>}
+            {errors.username && <p className="signup-error">{errors.username.message}</p>}
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <div className="input-wrapper">
+          <div className="signup-form-group">
+            <label className="signup-label">Password</label>
+            <div className="signup-input-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
-                {...register("password", { required: "Password is required" })}
-                className="input"
+                {...register("password", { 
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters"
+                  }
+                })}
+                className="signup-input"
               />
               <button
                 type="button"
-                className="eye-icon"
+                className="signup-eye-icon"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            {errors.password && <p className="error">{errors.password.message}</p>}
+            {errors.password && <p className="signup-error">{errors.password.message}</p>}
+            {password && !errors.password && (
+              <p className="signup-password-strength">
+                Password strength: {password.length >= 8 ? 'Strong' : password.length >= 6 ? 'Medium' : 'Weak'}
+              </p>
+            )}
           </div>
 
-          <button type="submit" className="submit-btn">Sign up</button>
+          <button type="submit" className="signup-submit-btn" disabled={isLoading}>
+            {isLoading ? (
+              <div className="signup-button-content">
+                <div className="signup-circular-loader"></div>
+                <span>Processing</span>
+              </div>
+            ) : (
+              "Sign up"
+            )}
+          </button>
         </form>
 
-        <button className="social-btn google-btn" onClick={handleGoogleSignUp}>
+        <button className="signup-social-btn signup-google-btn" onClick={handleGoogleSignUp}>
           <GoogleIcon /> Sign up with Google
         </button>
 
-        <p className="terms">
+        <p className="signup-terms">
           By signing up, you accept our{" "}
-          <a href="#" className="link">terms of service</a> and{" "}
-          <a href="#" className="link">privacy policy</a>
+          <a href="#" className="signup-link">terms of service</a> and{" "}
+          <a href="#" className="signup-link">privacy policy</a>
         </p>
       </div>
     </div>
