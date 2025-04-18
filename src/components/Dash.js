@@ -425,19 +425,19 @@ export default function Dash() {
         <div className="dash-follow-us">
           <h3 className="dash-footer-title">Follow Us</h3>
           <div className="dash-social-cards">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-facebook">
+            <a href="https://www.facebook.com/profile.php?id=61575305309035" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-facebook">
               <Facebook size={32} className="dash-social-icon" />
               <p>Facebook</p>
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-twitter">
+            <a href="https://x.com/Leximind_off" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-twitter">
               <Twitter size={32} className="dash-social-icon" />
               <p>Twitter</p>
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-instagram">
+            <a href="https://www.instagram.com/leximind_official?igsh=c3lnODBjeXlhazlw" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-instagram">
               <Instagram size={32} className="dash-social-icon" />
               <p>Instagram</p>
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-linkedin">
+            <a href="https://www.linkedin.com/in/leximind1/" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-linkedin">
               <Linkedin size={32} className="dash-social-icon" />
               <p>LinkedIn</p>
             </a>

@@ -37,7 +37,7 @@
 .dash-nav-list {
   display: flex;
   list-style: none;
-  gap: 0.9rem; /* Slightly adjusted for balance with Blog button */
+  gap: 0.9rem;
   align-items: center;
   margin: 0;
   padding: 0;
@@ -269,7 +269,7 @@
 }
 
 .dash-menu-open {
-  max-height: 400px; /* Increased slightly to accommodate Blog */
+  max-height: 400px;
 }
 
 .dash-mobile-menu-list {
@@ -555,6 +555,31 @@
 .dash-instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 .dash-linkedin { background-color: #0077b5; }
 
+/* Notification Dot */
+.dash-nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dash-notification-dot {
+  position: absolute;
+  top: 0;
+  right: -8px;
+  width: 10px;
+  height: 10px;
+  background-color: #e74c3c;
+  border-radius: 50%;
+  border: 2px solid #2c3e50;
+}
+
+/* Adjust for mobile menu */
+.dash-mobile-menu-link .dash-notification-dot {
+  top: 50%;
+  right: 1.5rem;
+  transform: translateY(-50%);
+}
+
 /* Animations */
 @keyframes fadeInUp {
   from {
@@ -570,7 +595,7 @@
 /* Responsive Styles */
 @media (max-width: 1200px) {
   .dash-nav-list {
-    gap: 0.7rem; /* Adjusted for Blog button */
+    gap: 0.7rem;
   }
   
   .dash-profile-dropdown {
@@ -592,7 +617,7 @@
   }
   
   .dash-nav-list {
-    gap: 0.5rem; /* Tighter spacing for more nav items */
+    gap: 0.5rem;
   }
   
   .dash-profile-dropdown {
@@ -608,8 +633,9 @@
   .dash-mobile-nav {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 8px;
     margin-left: auto;
+    margin-right: 10px;
   }
   
   .dash-profile-container {
@@ -619,7 +645,7 @@
   
   .dash-menu-button {
     order: 2;
-    margin-right: 2rem;
+    margin-right: 0;
     position: relative;
     z-index: 1001;
   }
@@ -638,7 +664,7 @@
   }
   
   .dash-profile-dropdown {
-    right: 10px;
+    right: 5px;
     top: 60px;
   }
 
@@ -733,7 +759,7 @@
   }
   
   .dash-feedback-container {
-    padding: add blog button in the nav bar2rem 1.5rem;
+    padding: 2rem 1.5rem;
   }
   
   .dash-social-cards {
@@ -744,30 +770,26 @@
     width: 100px;
     padding: 1rem;
   }
-}
-/* ... Existing Dash.css styles ... */
-
-/* Notification Dot */
-.dash-nav-item {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-.dash-notification-dot {
-  position: absolute;
-  top: 0;
-  right: -8px;
-  width: 10px;
-  height: 10px;
-  background-color: #e74c3c;
-  border-radius: 50%;
-  border: 2px solid #2c3e50;
+  
+  .dash-mobile-nav {
+    gap: 6px;
+    margin-right: 8px;
+  }
+  
+  .dash-profile-dropdown {
+    right: 5px;
+  }
 }
 
-/* Adjust for mobile menu */
-.dash-mobile-menu-link .dash-notification-dot {
-  top: 50%;
-  right: 1.5rem;
-  transform: translateY(-50%);
+@media (max-width: 375px) {
+  .dash-profile-dropdown {
+    right: 15px;
+    width: 200px;
+  }
+  
+  .dash-profile-email {
+    overflow-wrap: break-word; /* Allow email to wrap to next line */
+    max-width: 100%; /* Ensure it stays within container */
+    font-size: 0.75rem; /* Slightly smaller font for better fit */
+  }
 }

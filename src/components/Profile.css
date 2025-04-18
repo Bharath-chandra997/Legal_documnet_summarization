@@ -35,8 +35,8 @@
   }
   
   .profilepage-container.dark .profilepage-card {
-    --card-bg: #16213e;
-    --field-bg: #0f3460;
+    --card-bg: #111213;
+    --field-bg: #121518;
     --text-color: #f1f1f1;
     --border-color: #2a3a5a;
   }

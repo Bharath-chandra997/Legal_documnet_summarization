@@ -33,9 +33,6 @@ function Summarization() {
     { value: 'bengali', label: 'Bengali', flag: '🇮🇳', code: 'bn' },
     { value: 'marathi', label: 'Marathi', flag: '🇮🇳', code: 'mr' },
     { value: 'kannada', label: 'Kannada', flag: '🇮🇳', code: 'kn' },
-    { value: 'malayalam', label: 'Malayalam', flag: '🇮🇳', code: 'ml' },
-    { value: 'gujarati', label: 'Gujarati', flag: '🇮🇳', code: 'gu' },
-    { value: 'punjabi', label: 'Punjabi', flag: '🇮🇳', code: 'pa' },
   ];
 
   useEffect(() => {

@@ -473,10 +473,30 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 300px; /* Set maximum height for dropdown */
   z-index: 100;
   border: 1px solid rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(10px);
+}
+
+/* Custom scrollbar styles for WebKit browsers */
+.language-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.language-dropdown::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+.language-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.language-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .language-option {
@@ -805,6 +825,7 @@
   border-radius: 24px;
   padding: 12px 20px;
   display: flex;
+  margin-bottom: 10px;
   align-items: center;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);

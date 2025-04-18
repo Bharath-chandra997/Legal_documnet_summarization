@@ -215,7 +215,7 @@ function QAPage() {
             const updated = [...prev];
             updated[updated.length - 1] = {
               ...updated[updated.length - 1],
-              answer: `Error: ${error.message}`,
+              answer: `Error: Upload File again`,
               isRelevant: false,
             };
             return updated;

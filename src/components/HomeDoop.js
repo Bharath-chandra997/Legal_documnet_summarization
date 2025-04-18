@@ -14,12 +14,12 @@ export default function HomeDoop() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  const showSignUpNotification = (message = "You must sign up first to use this feature!") => {
+  const showSignUpNotification = (message = "sign up first to use this feature!") => {
     toast.warn(message, {
       position: "top-center",
       autoClose: 5000,
       hideProgressBar: false,
-      closeOnClick: true,
+    
       pauseOnHover: true,
       draggable: true,
       progress: undefined,

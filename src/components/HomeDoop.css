@@ -1,3 +1,4 @@
+/* HomeDoop.css */
 /* General Styles */
 body {
   font-family: 'Merriweather', serif;
@@ -23,7 +24,7 @@ body {
 /* Header Styles */
 .homedoop-header-home {
   background-color: #2c3e50;
-  padding: 16px 32px;
+  padding: 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,6 +37,7 @@ body {
 
 .homedoop-text-2xl {
   font-size: 1.5rem;
+  margin-right: 16px;
 }
 
 .homedoop-font-bold {
@@ -59,7 +61,7 @@ body {
   padding: 0;
   margin: 0;
   align-items: center;
-  margin-right: 48px;
+  margin-right: 32px;
 }
 
 .homedoop-nav-link {
@@ -134,26 +136,27 @@ body {
 .homedoop-mobile-menu {
   display: none;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
 }
 
 .homedoop-dropdown-button {
   background-color: white;
   color: #2c3e50;
-  padding: 12px 24px;
+  padding: 6px;
   border-radius: 6px;
   font-weight: bold;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 140px;
-  height: 56px;
+  width: 110px;
+  height: 40px;
   font-size: 16px;
   text-align: center;
   cursor: pointer;
   border: none;
-  margin-right: 40px;
 }
 
 .homedoop-dropdown-button:hover {
@@ -169,15 +172,15 @@ body {
 .homedoop-dropdown-menu {
   display: none;
   position: absolute;
-  top: 80px;
+  top: 64px;
   right: 10px;
-  width: 240px;
+  width: 200px;
   background-color: #2c3e50;
   text-align: left;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
-  padding: 12px;
+  padding: 8px;
 }
 
 .homedoop-dropdown-menu.homedoop-open {
@@ -193,9 +196,9 @@ body {
 .homedoop-dropdown-link {
   display: block;
   color: white;
-  padding: 14px 18px;
+  padding: 10px 14px;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 16px;
   transition: background-color 0.3s ease-in-out;
 }
 
@@ -208,48 +211,50 @@ body {
   background-image: url("https://www.lawnn.com/wp-content/uploads/2019/02/Top-20-Landmark-Supreme-Court-Important-Judgments-On-Labour-Law.jpg");
   background-size: cover;
   background-position: center;
-  height: calc(100vh - 72px);
+  background-attachment: fixed;
+  min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   position: relative;
-  top: 72px;
+  top: 64px;
+  overflow: hidden;
 }
 
 .homedoop-hero-overlay {
   background-color: rgba(0, 0, 0, 0.6);
-  padding: 40px;
+  padding: 20px;
   border-radius: 10px;
   color: white;
-  max-width: 80%;
+  max-width: 90%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .homedoop-welcome-title {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .homedoop-hero-title {
-  font-size: 42px;
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .homedoop-hero-text {
-  font-size: 20px;
-  margin-top: 10px;
+  font-size: 16px;
+  margin-top: 8px;
 }
 
 .homedoop-hero-button {
-  margin-top: 20px;
+  margin-top: 16px;
   background-color: white;
   color: black;
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: 10px 20px;
+  font-size: 14px;
   font-weight: bold;
   border: none;
   border-radius: 8px;
@@ -267,34 +272,36 @@ body {
   text-align: center;
   background-color: white;
   color: black;
-  padding: 60px 20px;
-  scroll-margin-top: 80px;
+  padding: 40px 16px;
+  scroll-margin-top: 64px;
   position: relative;
 }
 
 .homedoop-section-title {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: #0a2b41;
 }
 
 /* Cards */
 .homedoop-card-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
+  margin: 0 auto;
+  max-width: 1200px;
 }
 
 .homedoop-card {
   background: white;
-  padding: 24px;
+  padding: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -308,20 +315,22 @@ body {
 
 .homedoop-card-icon {
   color: #0e0e10;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  width: 36px;
+  height: 36px;
 }
 
 .homedoop-card h4 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
-  margin: 8px 0;
+  margin: 6px 0;
 }
 
 .homedoop-card p {
-  font-size: 16px;
+  font-size: 14px;
   color: #333;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 /* Feedback Section */
@@ -330,40 +339,41 @@ body {
   flex-direction: column;
   align-items: center;
   background: #1a4774;
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
   text-align: center;
 }
 
 .homedoop-feedback-input {
   width: 100%;
-  min-height: 100px;
-  padding: 10px;
+  min-height: 80px;
+  padding: 8px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 14px;
   resize: vertical;
 }
 
 .homedoop-feedback-icon {
   color: #3498db;
-  font-size: 40px;
+  font-size: 36px;
+  margin-bottom: 8px;
 }
 
 .homedoop-feedback-text {
-  margin-top: 10px;
-  font-size: 18px;
+  margin-top: 8px;
+  font-size: 16px;
 }
 
 .homedoop-feedback-button {
-  margin-top: 15px;
+  margin-top: 12px;
   background-color: #3498db;
   color: #133962;
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: 10px 20px;
+  font-size: 14px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
@@ -379,35 +389,38 @@ body {
   background-color: #2c3e50;
   color: white;
   text-align: center;
-  padding: 30px 20px;
-  margin-top: 40px;
+  padding: 20px 16px;
+  margin-top: 32px;
   position: relative;
 }
 
 .homedoop-footer-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .homedoop-social-cards {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .homedoop-social-card {
   background: white;
-  padding: 15px;
+  padding: 14px;
   border-radius: 12px;
-  width: 150px;
+  width: 120px;
+  max-width: 140px;
   text-align: center;
   color: black;
   font-weight: bold;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-decoration: none;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .homedoop-social-card:hover {
@@ -416,7 +429,14 @@ body {
 }
 
 .homedoop-social-icon {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  width: 36px;
+  height: 36px;
+}
+
+.homedoop-social-card p {
+  font-size: 14px;
+  margin: 0;
 }
 
 .homedoop-facebook { background-color: #1877f2; color: white; }
@@ -426,6 +446,39 @@ body {
 
 .homedoop-social-card:hover {
   opacity: 0.9;
+}
+
+/* Toastify Overrides */
+.Toastify__toast {
+  max-width: 360px;
+  font-size: 15px;
+  padding: 10px;
+  position: relative; /* Ensure relative positioning for absolute close button */
+}
+
+.Toastify__toast-body {
+  font-size: 15px;
+  padding-right: 28px; /* Add space for close button */
+}
+
+.Toastify__toast-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.Toastify__close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  color: #333;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
 }
 
 /* Responsive Styles */
@@ -451,29 +504,563 @@ body {
   .homedoop-mobile-menu {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    padding-right: 8px;
   }
 
-  .homedoop-signin-button, .homedoop-register-button {
-    width: 100px;
-    height: 36px;
-    padding: 6px;
-    font-size: 15px;
+  .homedoop-signin-button,
+  .homedoop-register-button,
+  .homedoop-dropdown-button {
+    width: 90px;
+    height: 32px;
+    padding: 4px;
+    font-size: 12px;
+    border-radius: 4px;
   }
 
   .homedoop-dropdown-button {
-    width: 140px;
-    height: 56px;
-    padding: 12px 24px;
-    font-size: 16px;
-    margin-right: 40px;
+    margin-right: 8px;
   }
 
   .homedoop-dropdown-menu {
-    display: none;
+    top: 60px;
+    right: 8px;
+    width: 180px;
+    padding: 6px;
   }
 
-  .homedoop-dropdown-menu.homedoop-open {
-    display: block;
+  .homedoop-hero-section {
+    min-height: calc(100vh - 60px);
+    top: 0px;
+  }
+
+  .homedoop-hero-overlay {
+    padding: 16px;
+    max-width: 95%;
+  }
+
+  .homedoop-welcome-title {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .homedoop-hero-title {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .homedoop-hero-text {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .homedoop-hero-button {
+    margin-top: 12px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .homedoop-section {
+    padding: 32px 12px;
+    scroll-margin-top: 60px;
+  }
+
+  .homedoop-section-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .homedoop-card-container {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 12px;
+    max-width: 960px;
+  }
+
+  .homedoop-card {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .homedoop-card-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 6px;
+  }
+
+  .homedoop-card h4 {
+    font-size: 16px;
+    margin: 4px 0;
+  }
+
+  .homedoop-card p {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .homedoop-feedback-container {
+    padding: 16px;
+    max-width: 400px;
+  }
+
+  .homedoop-feedback-icon {
+    font-size: 32px;
+    margin-bottom: 6px;
+  }
+
+  .homedoop-feedback-input {
+    min-height: 60px;
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .homedoop-feedback-text {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .homedoop-feedback-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .homedoop-footer-home {
+    padding: 16px 12px;
+    margin-top: 24px;
+  }
+
+  .homedoop-footer-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .homedoop-social-cards {
+    gap: 10px;
+  }
+
+  .homedoop-social-card {
+    width: 100px;
+    max-width: 120px;
+    padding: 12px;
+  }
+
+  .homedoop-social-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 6px;
+  }
+
+  .homedoop-social-card p {
+    font-size: 12px;
+  }
+
+  /* Toastify Overrides for Mobile */
+  .Toastify__toast {
+    max-width: 260px;
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .Toastify__toast-body {
+    font-size: 12px;
+    padding-right: 24px; /* Adjusted for close button */
+  }
+
+  .Toastify__toast-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .Toastify__close-button {
+    top: 6px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 568px) {
+  .homedoop-header-home {
+    padding: 10px 12px;
+  }
+
+  .homedoop-text-2xl {
+    font-size: 1.25rem;
+    margin-right: 12px;
+  }
+
+  .homedoop-mobile-menu {
+    gap: 4px;
+    padding-right: 6px;
+  }
+
+  .homedoop-signin-button,
+  .homedoop-register-button,
+  .homedoop-dropdown-button {
+    width: 80px;
+    height: 28px;
+    padding: 3px;
+    font-size: 11px;
+    border-radius: 3px;
+  }
+
+  .homedoop-dropdown-button {
+    margin-right: 6px;
+  }
+
+  .homedoop-dropdown-menu {
+    top: 56px;
+    right: 6px;
+    width: 160px;
+    padding: 4px;
+  }
+
+  .homedoop-dropdown-link {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .homedoop-hero-section {
+    min-height: calc(100vh - 56px);
+    top: 0px;
+  }
+
+  .homedoop-hero-overlay {
+    padding: 12px;
+    max-width: 98%;
+  }
+
+  .homedoop-welcome-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .homedoop-hero-title {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-hero-text {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .homedoop-hero-button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .homedoop-section {
+    padding: 24px 8px;
+    scroll-margin-top: 56px;
+  }
+
+  .homedoop-section-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .homedoop-card-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px;
+    max-width: 400px;
+  }
+
+  .homedoop-card {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .homedoop-card-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-card h4 {
+    font-size: 14px;
+    margin: 3px 0;
+  }
+
+  .homedoop-card p {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .homedoop-feedback-container {
+    padding: 12px;
+    max-width: 320px;
+  }
+
+  .homedoop-feedback-icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-feedback-input {
+    min-height: 50px;
+    padding: 4px;
+    font-size: 11px;
+  }
+
+  .homedoop-feedback-text {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .homedoop-feedback-button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .homedoop-footer-home {
+    padding: 12px 8px;
+    margin-top: 16px;
+  }
+
+  .homedoop-footer-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .homedoop-social-cards {
+    gap: 8px;
+  }
+
+  .homedoop-social-card {
+    width: 90px;
+    max-width: 100px;
+    padding: 10px;
+  }
+
+  .homedoop-social-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-social-card p {
+    font-size: 11px;
+  }
+
+  /* Toastify Overrides for Smaller Screens */
+  .Toastify__toast {
+    max-width: 220px;
+    font-size: 11px;
+    padding: 5px;
+  }
+
+  .Toastify__toast-body {
+    font-size: 11px;
+    padding-right: 22px; /* Adjusted for close button */
+  }
+
+  .Toastify__toast-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .Toastify__close-button {
+    top: 5px;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  .homedoop-header-home {
+    padding: 8px 10px;
+  }
+
+  .homedoop-text-2xl {
+    font-size: 1.1rem;
+    margin-right: 8px;
+  }
+
+  .homedoop-mobile-menu {
+    gap: 3px;
+    padding-right: 4px;
+  }
+
+  .homedoop-signin-button,
+  .homedoop-register-button,
+  .homedoop-dropdown-button {
+    width: 70px;
+    height: 26px;
+    padding: 2px;
+    font-size: 10px;
+    border-radius: 3px;
+  }
+
+  .homedoop-dropdown-button {
+    margin-right: 4px;
+  }
+
+  .homedoop-dropdown-menu {
+    top: 52px;
+    right: 4px;
+    width: 140px;
+    padding: 3px;
+  }
+
+  .homedoop-dropdown-link {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .homedoop-hero-section {
+    min-height: calc(100vh - 52px);
+    top: 0px;
+  }
+
+  .homedoop-hero-overlay {
+    padding: 10px;
+    max-width: 100%;
+  }
+
+  .homedoop-welcome-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .homedoop-hero-title {
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+
+  .homedoop-hero-text {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  .homedoop-hero-button {
+    margin-top: 8px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .homedoop-section {
+    padding: 20px 6px;
+    scroll-margin-top: 52px;
+  }
+
+  .homedoop-section-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .homedoop-card-container {
+    gap: 8px;
+    padding: 8px;
+    max-width: 300px;
+  }
+
+  .homedoop-card {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .homedoop-card-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-card h4 {
+    font-size: 12px;
+    margin: 2px 0;
+  }
+
+  .homedoop-card p {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+
+  .homedoop-feedback-container {
+    padding: 10px;
+    max-width: 280px;
+  }
+
+  .homedoop-feedback-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-feedback-input {
+    min-height: 40px;
+    padding: 3px;
+    font-size: 10px;
+  }
+
+  .homedoop-feedback-text {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  .homedoop-feedback-button {
+    margin-top: 6px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .homedoop-footer-home {
+    padding: 10px 6px;
+    margin-top: 12px;
+  }
+
+  .homedoop-footer-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .homedoop-social-cards {
+    gap: 6px;
+  }
+
+  .homedoop-social-card {
+    width: 80px;
+    max-width: 90px;
+    padding: 8px;
+  }
+
+  .homedoop-social-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-social-card p {
+    font-size: 10px;
+  }
+
+  /* Toastify Overrides for Very Small Screens */
+  .Toastify__toast {
+    max-width: 200px;
+    font-size: 10px;
+    padding: 4px;
+  }
+
+  .Toastify__toast-body {
+    font-size: 10px;
+    padding-right: 20px; /* Adjusted for close button */
+  }
+
+  .Toastify__toast-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .Toastify__close-button {
+    top: 4px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
   }
 }

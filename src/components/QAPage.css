@@ -96,17 +96,20 @@
   border-radius: 8px;
   margin-bottom: 20px;
   animation: fadeIn 0.3s ease;
+  overflow: hidden; /* Clip any overflowing content */
 }
 
 .qna-file-info {
   display: flex;
   align-items: center;
   gap: 10px;
+  max-width: calc(100% - 50px); /* Account for remove button and padding */
 }
 
 .qna-file-icon {
   color: #3498db;
   font-size: 20px;
+  flex-shrink: 0;
 }
 
 .qna-file-name {
@@ -114,10 +117,10 @@
   color: #ecf0f1;
   margin: 0;
   font-size: 14px;
-  white-space: nowrap;
+  max-width: calc(100% - 30px); /* Account for icon and gap */
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 300px;
+  white-space: normal; /* Allow wrapping for long filenames */
 }
 
 .qna-remove-file {
@@ -131,6 +134,7 @@
   padding: 5px;
   border-radius: 50%;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .qna-remove-file:hover {
@@ -401,8 +405,13 @@
     padding: 12px 16px;
   }
 
+  .qna-file-info {
+    max-width: calc(100% - 40px); /* Adjust for smaller screens */
+  }
+
   .qna-file-name {
-    max-width: 200px;
+    max-width: calc(100% - 30px); /* Adjust for icon and gap */
+    font-size: 13px; /* Slightly smaller for better fit */
   }
 
   .qna-heading {
@@ -436,6 +445,15 @@
   .qna-send-btn {
     width: 36px;
     height: 36px;
+  }
+
+  .qna-file-info {
+    max-width: calc(100% - 36px); /* Adjust for smaller remove button */
+  }
+
+  .qna-file-name {
+    max-width: calc(100% - 30px); /* Consistent with 768px */
+    font-size: 12px; /* Smaller for very small screens */
   }
 
   .qna-heading {
