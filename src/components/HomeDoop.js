@@ -171,15 +171,15 @@ export default function HomeDoop() {
         <div className="homedoop-follow-us">
           <h3 className="homedoop-footer-title">Follow Us</h3>
           <div className="homedoop-social-cards">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-facebook">
+            <a href="https://www.facebook.com/profile.php?id=61575305309035" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-facebook">
               <Facebook size={40} className="homedoop-social-icon" />
               <p>Facebook</p>
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-twitter">
+            <a href="https://x.com/Leximind_off" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-twitter">
               <Twitter size={40} className="homedoop-social-icon" />
               <p>Twitter</p>
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-instagram">
+            <a href="https://www.instagram.com/leximind_official?igsh=c3lnODBjeXlhazlw" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-instagram">
               <Instagram size={40} className="homedoop-social-icon" />
               <p>Instagram</p>
             </a>
