@@ -183,7 +183,7 @@ export default function HomeDoop() {
               <Instagram size={40} className="homedoop-social-icon" />
               <p>Instagram</p>
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-linkedin">
+            <a href="https://www.linkedin.com/in/leximind1/" target="_blank" rel="noopener noreferrer" className="homedoop-social-card homedoop-linkedin">
               <Linkedin size={40} className="homedoop-social-icon" />
               <p>LinkedIn</p>
             </a>
