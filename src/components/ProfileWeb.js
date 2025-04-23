@@ -71,7 +71,7 @@ function ProfileWeb() {
               <motion.button
                 onClick={() => navigate('/')}
                 className="profilepage-nav-btn"
-                title="Go to Summarization"
+                title="Go to Home"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
