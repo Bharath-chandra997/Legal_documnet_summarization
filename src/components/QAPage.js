@@ -229,12 +229,11 @@ function QAPage() {
   );
 
   const handleBackClick = () => {
-    navigate('/ModelsPage'); // Navigate to the model page
+    navigate('/ModelsPage');
   };
 
   return (
     <div className="qna-main-page">
-      {/* Back Button */}
       <motion.button
         className="qna-back-btn"
         onClick={handleBackClick}

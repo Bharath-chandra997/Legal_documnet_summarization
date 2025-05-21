@@ -248,7 +248,7 @@ function Summarization() {
   };
 
   const handleBackClick = () => {
-    navigate('/ModelsPage'); // Navigate to the model page
+    navigate('/ModelsPage'); 
   };
 
   useEffect(() => {
@@ -324,7 +324,6 @@ function Summarization() {
 
   return (
     <div className="summary-mainPage">
-      {/* Back Button */}
       <motion.button
         className="summary-back-btn"
         onClick={handleBackClick}

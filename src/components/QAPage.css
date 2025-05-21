@@ -273,10 +273,13 @@
   border-radius: 16px 16px 16px 4px;
   font-size: 14px;
   font-weight: 500;
-  max-width: 75%;
+  max-width: 85%; /* Increased from 75% */
   align-self: flex-start;
   opacity: 0;
   animation: slideIn 0.5s ease-out 0.3s forwards;
+  word-break: break-word; /* Ensure text wraps */
+  overflow-wrap: anywhere; /* Handle long words */
+  overflow: hidden; /* Prevent overflow */
 }
 
 .qna-answer-card {
@@ -284,10 +287,13 @@
   color: #FFF;
   padding: 8px 12px;
   border-radius: 4px 16px 16px 16px;
-  max-width: 75%;
+  max-width: 85%; /* Increased from 75% */
   align-self: flex-end;
   opacity: 0;
   animation: slideIn 0.5s ease-out 0.4s forwards;
+  word-break: break-word; /* Ensure text wraps */
+  overflow-wrap: anywhere; /* Handle long words */
+  overflow: hidden; /* Prevent overflow */
 }
 
 .qna-answer-card.irrelevant {
@@ -435,7 +441,7 @@
   }
   .qna-question,
   .qna-answer-card {
-    max-width: 90%;
+    max-width: 95%; /* Increased from 90% */
   }
   .qna-input {
     font-size: 13px;
@@ -462,5 +468,53 @@
   }
   .qna-input-bar {
     padding: 6px;
+  }
+}
+
+@media (max-width: 375px) {
+  .qna-main-page {
+    padding: 56px 12px 24px; /* Adjusted padding */
+  }
+  .qna-file-upload-box {
+    padding: 12px;
+    min-height: 250px;
+  }
+  .qna-file-upload-box h3 {
+    font-size: 18px;
+  }
+  .qna-upload-area {
+    padding: 16px;
+    max-width: 100%;
+  }
+  .qna-upload-icon {
+    font-size: 24px;
+  }
+  .qna-upload-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .qna-section {
+    padding: 16px;
+  }
+  .qna-heading {
+    font-size: 15px;
+  }
+  .qna-question,
+  .qna-answer-card {
+    max-width: 95%; /* Increased for small screens */
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  .qna-input {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .qna-send-btn {
+    width: 30px;
+    height: 30px;
+  }
+  .qna-answer,
+  .qna-paragraph {
+    font-size: 12px;
   }
 }

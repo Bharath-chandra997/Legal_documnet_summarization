@@ -20,8 +20,8 @@ import BlogEditor from './components/blog/BlogEditor';
 import BlogPostDetail from './components/blog/BlogPostDetail';
 import PublicBlogList from './components/blog/PublicBlogList';
 import FeedbackList from './components/admin/FeedbackList';
-import NotesApp from "./components/NotesApp"; // Added import
-import ProfileWeb from "./components/ProfileWeb"; // Added import
+import NotesApp from "./components/NotesApp"; 
+import ProfileWeb from "./components/ProfileWeb"; 
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -40,7 +40,7 @@ const ProtectedRoute = ({ children }) => {
       return <Navigate to="/signin" state={{ expired: true }} replace />;
     }
 
-    // Redirect admins to admin dashboard
+ 
     if (decoded.isAdmin) {
       return <Navigate to="/admin/dashboard" replace />;
     }
@@ -101,8 +101,7 @@ const PublicRoute = ({ children, restricted = false }) => {
         localStorage.removeItem('email');
         return children;
       }
-      
-      // If route is restricted (like home page) and user is logged in, redirect
+ 
       if (restricted) {
         return <Navigate to={decoded.isAdmin ? "/admin/dashboard" : "/Dash"} replace />;
       }
@@ -128,14 +127,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public routes accessible to all, but restricted if logged in */}
         <Route path="/" element={
           <PublicRoute restricted>
             <HomeDoop />
           </PublicRoute>
         } />
-        
-        {/* Authentication routes */}
         <Route path="/signin" element={
           <PublicRoute restricted>
             <SignIn />
@@ -167,7 +163,6 @@ function App() {
           </PublicRoute>
         } />
 
-        {/* Protected user routes */}
         <Route path="/ModelsPage" element={
           <ProtectedRoute>
             <ModelsPage />
@@ -192,14 +187,14 @@ function App() {
           <ProtectedRoute>
             <NotesApp />
           </ProtectedRoute>
-        } /> {/* Added NotesApp route */}
+        } /> 
         <Route path="/ProfileWeb" element={
           <ProtectedRoute>
             <ProfileWeb />
           </ProtectedRoute>
-        } /> {/* Added ProfileWeb route */}
+        } /> 
 
-        {/* Blog routes */}
+    
         <Route path="/blog" element={
           <PublicRoute>
             <PublicBlogList />
@@ -211,7 +206,6 @@ function App() {
           </PublicRoute>
         } />
         
-        {/* Admin routes */}
         <Route path="/admin" element={
           <AdminProtectedRoute>
             <AdminLayout />
@@ -225,10 +219,8 @@ function App() {
           <Route path="feedback" element={<FeedbackList />} />
         </Route>
 
-        {/* Unauthorized route */}
         <Route path="/unauthorized" element={<Error message="Unauthorized Access" />} />
         
-        {/* Catch-all route */}
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

@@ -60,7 +60,7 @@ function ProfileWeb() {
         transition={{ duration: 0.5 }}
       >
         <div className="profilepage-header">
-          <h3>User Profile</h3>
+          <h3>Profile</h3>
           <div className="profilepage-actions">
             <motion.button
               onClick={handleBack}
