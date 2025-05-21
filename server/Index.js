@@ -7,6 +7,7 @@ const passport = require("passport");
 const routes = require("./routes/UserRoutes");
 const app = express();
 const adminRoutes = require("./routes/admin");
+
 // CORS configuration
 app.use(cors({
   origin: "http://localhost:3000",
@@ -19,7 +20,7 @@ app.use(cors({
 // Middleware
 app.use(express.json());
 
-// Session configuration (required for Google auth)
+// Session configuration
 app.use(session({
   secret: process.env.JWT_SECRET || "secret-123",
   resave: false,
@@ -34,11 +35,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Handle preflight requests
 app.options('*', cors());
-
-// Mount routes
 app.use("/auth", routes);
 app.use("/api/notes", routes);
 app.use("/api", adminRoutes);
@@ -50,7 +47,6 @@ mongoose.connect(process.env.MONGO_CONN, {
 })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
-
 
 // Start server
 const PORT = process.env.PORT || 8080;

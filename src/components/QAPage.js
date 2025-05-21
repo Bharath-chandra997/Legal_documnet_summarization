@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { FiUpload, FiX, FiFile, FiSend } from 'react-icons/fi';
+import { FiUpload, FiX, FiFile, FiSend, FiArrowLeft } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './QAPage.css';
 
 function QAPage() {
@@ -13,6 +13,7 @@ function QAPage() {
   const [currentFilename, setCurrentFilename] = useState(null);
   const location = useLocation();
   const inputBarRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedState = localStorage.getItem('qaState');
@@ -73,10 +74,9 @@ function QAPage() {
             if (answerElements.length > 0) {
               const lastAnswer = answerElements[answerElements.length - 1];
               const scrollPosition = lastAnswer.offsetTop - 100;
-              
               window.scrollTo({
                 top: scrollPosition,
-                behavior: 'smooth'
+                behavior: 'smooth',
               });
             }
           } catch (error) {
@@ -228,14 +228,30 @@ function QAPage() {
     [question, selectedFile, isProcessing]
   );
 
+  const handleBackClick = () => {
+    navigate('/models'); // Navigate to the model page
+  };
+
   return (
     <div className="qna-main-page">
+      {/* Back Button */}
+      <motion.button
+        className="qna-back-btn"
+        onClick={handleBackClick}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ duration: 0.2 }}
+        aria-label="Back to model page"
+      >
+        <FiArrowLeft className="qna-back-icon" />
+      </motion.button>
+
       <div className="qna-file-upload-section">
         <motion.div
           className="qna-file-upload-box"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         >
           <h3>Legal Document Q&A</h3>
           <p>Ask questions about your legal documents</p>
@@ -250,27 +266,34 @@ function QAPage() {
               {selectedFile ? (
                 <motion.div
                   key="file-preview"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="qna-file-preview"
                 >
                   <div className="qna-file-info">
                     <FiFile className="qna-file-icon" />
                     <p className="qna-file-name">{selectedFile.name}</p>
                   </div>
-                  <button
+                  <motion.button
                     className="qna-remove-file"
                     onClick={handleRemoveFile}
                     disabled={isProcessing}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <FiX />
-                  </button>
+                  </motion.button>
                 </motion.div>
               ) : (
                 <motion.div
                   key="upload-prompt"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="qna-upload-prompt"
                 >
                   <FiUpload className="qna-upload-icon" />
@@ -287,9 +310,14 @@ function QAPage() {
                 accept=".pdf,.doc,.docx,.txt"
                 disabled={isProcessing}
               />
-              <div className="qna-btn-icon-wrapper">
+              <motion.div
+                className="qna-btn-icon-wrapper"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              >
                 <FiUpload className="qna-btn-icon" />
-              </div>
+              </motion.div>
               {isProcessing ? 'Processing...' : 'Browse files'}
             </label>
             <p className="qna-file-types">Supported: PDF, DOC, DOCX, TXT</p>
@@ -300,22 +328,28 @@ function QAPage() {
           {selectedFile && (
             <motion.div
               className="qna-section"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
             >
               <h4 className="qna-heading">Questions & Answers</h4>
               <div className="qna-history">
                 {qaHistory.length > 0 ? (
                   qaHistory.map((qa, index) => (
-                    <div key={index} className="qna-entry">
+                    <motion.div
+                      key={index}
+                      className="qna-entry"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1, ease: 'easeOut' }}
+                    >
                       <span className="qna-question">Q: {qa.question}</span>
                       <div className={`qna-answer-card ${!qa.isRelevant ? 'irrelevant' : ''}`}>
                         <p className="qna-answer">A: {qa.answer}</p>
                         {qa.sections && qa.sections.length > 0 && (
                           <div className="qna-relevant-sections">
-                            <h4 className="qna-h4">Relevant Sections:</h4>
+                            <h5 className="qna-h5">Relevant Sections:</h5>
                             {qa.sections.map((section, i) => (
                               <div key={i} className="qna-section-card">
                                 <p
@@ -328,7 +362,7 @@ function QAPage() {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
                   ))
                 ) : (
                   <p className="qna-placeholder" aria-live="polite">
@@ -346,13 +380,16 @@ function QAPage() {
                   rows="4"
                   disabled={isProcessing}
                 />
-                <button
+                <motion.button
                   onClick={handleQuestionSubmit}
                   className="qna-send-btn"
                   disabled={isProcessing || !question.trim()}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <FiSend />
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           )}

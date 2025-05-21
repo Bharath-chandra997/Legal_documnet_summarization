@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from transformers import pipeline, AutoTokenizer, T5ForConditionalGeneration
+from transformers import pipeline, AutoTokenizer
 import torch
 import os
 from werkzeug.utils import secure_filename
@@ -652,9 +652,10 @@ try:
     device = -1  # Always use CPU
     logger.info("Using device: CPU")
     
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    model = T5ForConditionalGeneration.from_pretrained(MODEL_NAME)
-    
+    # tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer =MODEL_NAME
+    # model = T5ForConditionalGeneration.from_pretrained(MODEL_NAME)
+    model = MODEL_NAME
     summarizer = pipeline(
         "summarization",
         model=model,

@@ -11,7 +11,6 @@ const {
   resetPassword,
   verifyResetOtp,
   requestNewOtp,
-  getImageProxy
 } = require("../controler/UserControler");
 const {
   createNote,

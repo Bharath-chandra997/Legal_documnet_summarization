@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiUser, FiHome, FiFileText, FiSun, FiMoon, FiCheck, FiLogOut } from 'react-icons/fi';
+import { FiUser, FiHome, FiFileText, FiSun, FiMoon, FiCheck, FiLogOut, FiArrowLeft } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
@@ -24,7 +24,7 @@ function ProfileWeb() {
         setEmail(decoded.email || 'N/A');
         setImage(decoded.image || localStorage.getItem('image') || '');
       } catch (error) {
-        // Handle error silently or with alternative feedback if needed
+        // Handle error silently
       }
     }
   }, []);
@@ -38,6 +38,10 @@ function ProfileWeb() {
   const handleLogout = () => {
     localStorage.clear();
     navigate('/');
+  };
+
+  const handleBack = () => {
+    navigate('/Dash');
   };
 
   const getImageSrc = (image, name) => {
@@ -58,6 +62,17 @@ function ProfileWeb() {
         <div className="profilepage-header">
           <h3>User Profile</h3>
           <div className="profilepage-actions">
+            <motion.button
+              onClick={handleBack}
+              className="profilepage-back-btn"
+              title="Go back to dashboard"
+              aria-label="Go back to dashboard"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FiArrowLeft />
+              Back
+            </motion.button>
             <motion.button
               onClick={toggleTheme}
               className="profilepage-theme-btn"

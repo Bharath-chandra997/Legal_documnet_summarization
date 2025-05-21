@@ -8,9 +8,11 @@ const Otp = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isResending, setIsResending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine); // Initial network state
   const navigate = useNavigate();
   const inputRefs = useRef([]);
 
+  // Handle email check and initial focus
   useEffect(() => {
     const email = localStorage.getItem('email');
     if (!email) {
@@ -22,9 +24,30 @@ const Otp = () => {
     }
   }, [navigate]);
 
+  // Handle offline/online detection
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    // Add event listeners
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const handleChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
-    
+
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
@@ -63,13 +86,16 @@ const Otp = () => {
   };
 
   const verifyOtp = async (fullOtp) => {
-    console.log('verifyOtp called with OTP:', fullOtp);
+    if (!navigator.onLine) {
+      setIsOffline(true); // Ensure banner is shown
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0].focus();
+      return;
+    }
+
     setIsVerifying(true);
-    console.log('isVerifying set to true');
-    
     try {
       const email = localStorage.getItem('email');
-      console.log('Sending request to verify OTP for email:', email);
       const response = await fetch('http://localhost:8080/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,10 +104,9 @@ const Otp = () => {
 
       const result = await response.json();
       // Minimum delay to ensure animation visibility
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Increased to 2s for testing
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       if (response.ok) {
-        console.log('OTP verification successful, token:', result.token);
         toast.success('OTP verified successfully!', {
           position: 'top-right',
           autoClose: 3000,
@@ -91,7 +116,6 @@ const Otp = () => {
           },
         });
       } else {
-        console.log('OTP verification failed:', result.error);
         toast.error(result.error || 'Invalid OTP. Please try again.', {
           position: 'top-right',
           autoClose: 5000,
@@ -100,18 +124,23 @@ const Otp = () => {
         inputRefs.current[0].focus();
       }
     } catch (error) {
-      console.error('Error during OTP verification:', error);
       toast.error('Error verifying OTP. Please try again.', {
         position: 'top-right',
         autoClose: 5000,
       });
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0].focus();
     } finally {
-      console.log('isVerifying set to false');
       setIsVerifying(false);
     }
   };
 
   const requestNewOtp = async () => {
+    if (!navigator.onLine) {
+      setIsOffline(true); // Ensure banner is shown
+      return;
+    }
+
     try {
       setIsResending(true);
       const email = localStorage.getItem('email');
@@ -153,10 +182,8 @@ const Otp = () => {
     }
   };
 
-  // Temporary toggle for testing animation
-  const toggleLoading = () => {
-    setIsVerifying((prev) => !prev);
-    console.log('Toggled isVerifying to:', !isVerifying);
+  const handleDismissOffline = () => {
+    setIsOffline(false);
   };
 
   return (
@@ -173,13 +200,27 @@ const Otp = () => {
           draggable
           pauseOnHover
         />
-        
+
+        {/* Custom Offline Notification */}
+        {isOffline && (
+          <div className="offline-banner" role="alert">
+            <span>You are offline. Please check your internet connection.</span>
+            <button
+              className="offline-banner-close"
+              onClick={handleDismissOffline}
+              aria-label="Dismiss offline notification"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         <div className="otp-container">
           <h2 className="otp-title">Verify Your Account</h2>
           <p className="otp-subtitle">
             Enter the 6-digit code sent to <strong className="otp-email">{localStorage.getItem('email')}</strong>
           </p>
-          
+
           <div className="otp-inputs-container" onPaste={handlePaste}>
             {otp.map((digit, index) => (
               <input
@@ -221,7 +262,6 @@ const Otp = () => {
           <div className="otp-spam-message">
             <p>If you don't see the email in your inbox, please check your spam folder.</p>
           </div>
-
         </div>
       </div>
     </div>

@@ -1,29 +1,22 @@
-/* HomeDoop.css */
 /* General Styles */
 body {
-  font-family: 'Merriweather', serif;
-  background-color: #f3f4f6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1A1A1A;
   margin: 0;
   padding: 0;
-  color: white;
+  color: #E0E0E0;
+  line-height: 1.5;
   scroll-behavior: smooth;
 }
 
 .homedoop-min-h-screen {
   min-height: 100vh;
-}
-
-.homedoop-bg-gray-100 {
-  background-color: #f3f4f6;
-}
-
-.homedoop-text-gray-900 {
-  color: #111827;
+  background-color: #1A1A1A;
 }
 
 /* Header Styles */
 .homedoop-header-home {
-  background-color: #2c3e50;
+  background-color: #1A1A1A;
   padding: 12px 16px;
   display: flex;
   justify-content: space-between;
@@ -31,21 +24,21 @@ body {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 50;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
+/* Logo */
 .homedoop-text-2xl {
   font-size: 1.5rem;
-  margin-right: 16px;
-}
-
-.homedoop-font-bold {
   font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+  transition: transform 0.3s ease;
 }
 
-.homedoop-text-white {
-  color: white;
+.homedoop-text-2xl:hover {
+  transform: scale(1.1);
 }
 
 /* Desktop Navigation */
@@ -55,81 +48,92 @@ body {
 }
 
 .homedoop-nav-menu ul {
-  list-style: none;
   display: flex;
+  list-style: none;
   gap: 24px;
-  padding: 0;
-  margin: 0;
   align-items: center;
-  margin-right: 32px;
+  margin: 0;
+  padding: 0;
+  flex-wrap: nowrap;
 }
 
 .homedoop-nav-link {
-  color: white;
+  color: #FFFFFF;
   text-decoration: none;
   font-weight: 600;
   font-size: 1.1rem;
-  transition: color 0.3s ease-in-out;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .homedoop-nav-link:hover {
-  color: rgb(130, 120, 115);
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
 }
 
-.homedoop-signin-button {
-  background-color: white;
-  color: #2c3e50;
-  padding: 8px;
-  border-radius: 6px;
-  font-weight: bold;
-  text-decoration: none;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 110px;
-  height: 40px;
-  font-size: 16px;
-  text-align: center;
-  cursor: pointer;
-  border: none;
+.homedoop-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #3498DB;
+  transition: width 0.3s ease;
 }
 
-.homedoop-signin-button:hover {
-  background-color: rgb(85, 99, 145);
-  color: #fff;
+.homedoop-nav-link:hover::after {
+  width: 100%;
 }
 
-.homedoop-signin-button:active {
-  transform: scale(0.95);
-}
-
+/* Buttons */
+.homedoop-signin-button,
 .homedoop-register-button {
-  background-color: #265687;
-  color: white;
+  background: linear-gradient(45deg, #3498DB, #2980B9);
+  color: #FFFFFF;
   padding: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
   border-radius: 6px;
-  font-weight: bold;
   text-decoration: none;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 110px;
   height: 40px;
-  font-size: 16px;
-  text-align: center;
-  cursor: pointer;
-  border: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
+.homedoop-signin-button::before,
+.homedoop-register-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.homedoop-signin-button:hover,
 .homedoop-register-button:hover {
-  background-color: #2579cc;
-  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
 }
 
-.homedoop-register-button:active {
-  transform: scale(0.95);
+.homedoop-signin-button:hover::before,
+.homedoop-register-button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 /* Mobile Menu */
@@ -142,44 +146,38 @@ body {
 }
 
 .homedoop-dropdown-button {
-  background-color: white;
-  color: #2c3e50;
+  background: transparent;
+  color: #FFFFFF;
   padding: 6px;
+  border: none;
   border-radius: 6px;
-  font-weight: bold;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 110px;
   height: 40px;
-  font-size: 16px;
-  text-align: center;
   cursor: pointer;
-  border: none;
 }
 
 .homedoop-dropdown-button:hover {
-  background-color: #295b8d;
-  color: #fff;
-}
-
-.homedoop-dropdown-button:active {
-  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
 }
 
 /* Mobile Dropdown */
 .homedoop-dropdown-menu {
   display: none;
   position: absolute;
-  top: 64px;
+  top: 100%;
   right: 10px;
   width: 200px;
-  background-color: #2c3e50;
-  text-align: left;
+  background-color: #1A1A1A;
   border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  z-index: 1001;
   padding: 8px;
 }
 
@@ -195,15 +193,15 @@ body {
 
 .homedoop-dropdown-link {
   display: block;
-  color: white;
+  color: #FFFFFF;
   padding: 10px 14px;
   text-decoration: none;
   font-size: 16px;
-  transition: background-color 0.3s ease-in-out;
+  transition: background-color 0.3s ease;
 }
 
 .homedoop-dropdown-link:hover {
-  background-color: rgb(54, 9, 9);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Hero Section */
@@ -219,28 +217,38 @@ body {
   text-align: center;
   position: relative;
   top: 64px;
-  overflow: hidden;
+}
+
+.homedoop-hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .homedoop-hero-overlay {
-  background-color: rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 1;
   padding: 20px;
   border-radius: 10px;
-  color: white;
+  color: #FFFFFF;
   max-width: 90%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .homedoop-welcome-title {
   font-size: 36px;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 16px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .homedoop-hero-title {
   font-size: 28px;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 8px;
 }
 
@@ -251,37 +259,69 @@ body {
 
 .homedoop-hero-button {
   margin-top: 16px;
-  background-color: white;
-  color: black;
+  background: linear-gradient(45deg, #3498DB, #2980B9);
+  color: #FFFFFF;
   padding: 10px 20px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.homedoop-hero-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
 }
 
 .homedoop-hero-button:hover {
-  background-color: #f3f4f6;
   transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+}
+
+.homedoop-hero-button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 /* Sections */
 .homedoop-section {
+  padding: 80px 16px 40px;
+  margin-top: 40px;
+  background-color: #2A2A2A;
   text-align: center;
-  background-color: white;
-  color: black;
-  padding: 40px 16px;
-  scroll-margin-top: 64px;
-  position: relative;
+  scroll-margin-top: 80px;
 }
 
 .homedoop-section-title {
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 20px;
-  color: #0a2b41;
+  color: #FFFFFF;
+  position: relative;
+}
+
+.homedoop-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background-color: #3498DB;
 }
 
 /* Cards */
@@ -296,25 +336,22 @@ body {
 }
 
 .homedoop-card {
-  background: white;
+  background: #2A2A2A;
   padding: 16px;
+  border-bottom: 3px solid #3498DB;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   text-align: center;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
 }
 
 .homedoop-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
 }
 
 .homedoop-card-icon {
-  color: #0e0e10;
+  color: #3498DB;
   margin-bottom: 8px;
   width: 36px;
   height: 36px;
@@ -322,13 +359,14 @@ body {
 
 .homedoop-card h4 {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 600;
   margin: 6px 0;
+  color: #FFFFFF;
 }
 
 .homedoop-card p {
   font-size: 14px;
-  color: #333;
+  color: #E0E0E0;
   margin: 0;
   line-height: 1.4;
 }
@@ -338,66 +376,100 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #1a4774;
+  background: linear-gradient(135deg, #2A2A2A, #3A3A3A);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
   max-width: 500px;
   margin: 0 auto;
   text-align: center;
+}
+
+.homedoop-feedback-icon {
+  color: #3498DB;
+  margin-bottom: 8px;
+  width: 36px;
+  height: 36px;
+}
+
+.homedoop-feedback-text {
+  font-size: 16px;
+  margin-top: 8px;
+  color: #E0E0E0;
 }
 
 .homedoop-feedback-input {
   width: 100%;
   min-height: 80px;
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   font-size: 14px;
   resize: vertical;
+  background: #3A3A3A;
+  color: #E0E0E0;
+  transition: all 0.3s ease;
 }
 
-.homedoop-feedback-icon {
-  color: #3498db;
-  font-size: 36px;
-  margin-bottom: 8px;
-}
-
-.homedoop-feedback-text {
-  margin-top: 8px;
-  font-size: 16px;
+.homedoop-feedback-input:focus {
+  border-color: #3498DB;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+  outline: none;
 }
 
 .homedoop-feedback-button {
   margin-top: 12px;
-  background-color: #3498db;
-  color: #133962;
+  background: linear-gradient(45deg, #3498DB, #2980B9);
+  color: #FFFFFF;
   padding: 10px 20px;
   font-size: 14px;
+  font-weight: 600;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.homedoop-feedback-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
 }
 
 .homedoop-feedback-button:hover {
-  background-color: #75808c;
   transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+}
+
+.homedoop-feedback-button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 /* Footer */
 .homedoop-footer-home {
-  background-color: #2c3e50;
-  color: white;
-  text-align: center;
+  background: #1A1A1A;
+  color: #E0E0E0;
   padding: 20px 16px;
+  text-align: center;
   margin-top: 32px;
-  position: relative;
 }
 
 .homedoop-footer-title {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 16px;
+  color: #FFFFFF;
 }
 
 .homedoop-social-cards {
@@ -408,24 +480,24 @@ body {
 }
 
 .homedoop-social-card {
-  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 14px;
   border-radius: 12px;
   width: 120px;
-  max-width: 140px;
   text-align: center;
-  color: black;
-  font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
   text-decoration: none;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
 }
 
 .homedoop-social-card:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 .homedoop-social-icon {
@@ -435,30 +507,43 @@ body {
 }
 
 .homedoop-social-card p {
-  font-size: 14px;
   margin: 0;
 }
 
-.homedoop-facebook { background-color: #1877f2; color: white; }
-.homedoop-twitter { background-color: #1da1f2; color: white; }
-.homedoop-instagram { background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); color: white; }
-.homedoop-linkedin { background-color: #0077b5; color: white; }
-
-.homedoop-social-card:hover {
-  opacity: 0.9;
-}
+/* Social Card Colors */
+.homedoop-facebook { background-color: #3B5998; }
+.homedoop-twitter { background-color: #1DA1F2; }
+.homedoop-instagram { background: linear-gradient(45deg, #F09433, #E6683C, #DC2743, #CC2366, #BC1888); }
+.homedoop-linkedin { background-color: #0077B5; }
 
 /* Toastify Overrides */
 .Toastify__toast {
-  max-width: 360px;
+  top: 80px !important;
+  right: 15px !important;
+  width: 320px;
+  max-width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   font-size: 15px;
-  padding: 10px;
-  position: relative; /* Ensure relative positioning for absolute close button */
+  font-weight: 600;
+  padding: 10px 16px;
+  color: #FFFFFF;
+  transition: all 0.3s ease;
+  z-index: 1002;
+}
+
+.Toastify__toast:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
+}
+
+.Toastify__toast--warning {
+  background: linear-gradient(135deg, #636E72, #2D3436);
 }
 
 .Toastify__toast-body {
-  font-size: 15px;
-  padding-right: 28px; /* Add space for close button */
+  margin: 0;
+  padding: 0;
 }
 
 .Toastify__toast-icon {
@@ -467,21 +552,138 @@ body {
 }
 
 .Toastify__close-button {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 20px;
-  height: 20px;
-  color: #333;
+  color: #FFFFFF;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+  right: 5px;
+  font-size: 14px;
 }
 
 .Toastify__close-button:hover {
   opacity: 1;
 }
 
+/* Animations */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3) translateY(50px); }
+  50% { opacity: 1; transform: scale(1.1); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes sparkle {
+  0% { opacity: 0; transform: scale(0); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(0); }
+}
+
+/* Sparkle Animation for Social Cards (Below 768px) */
+@media (max-width: 768px) {
+  .homedoop-social-card {
+    position: relative;
+  }
+
+  .homedoop-social-card::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, #FFD700 20%, #FFFFFF 60%, transparent);
+    border-radius: 50%;
+    top: -5px;
+    left: 10%;
+    z-index: 1;
+    animation: sparkle 1.5s infinite ease-in-out;
+    aria-hidden: true;
+  }
+
+  .homedoop-social-card:nth-child(1)::before { animation-delay: 0.2s; }
+  .homedoop-social-card:nth-child(2)::before { animation-delay: 0.3s; }
+  .homedoop-social-card:nth-child(3)::before { animation-delay: 0.4s; }
+  .homedoop-social-card:nth-child(4)::before { animation-delay: 0.5s; }
+}
+
 /* Responsive Styles */
+@media (max-width: 930px) {
+  .homedoop-header-home {
+    padding: 12px 12px;
+  }
+
+  .homedoop-nav-menu ul {
+    gap: 16px;
+  }
+
+  .homedoop-nav-link {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .homedoop-signin-button,
+  .homedoop-register-button {
+    width: 90px;
+    height: 32px;
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .homedoop-nav-link:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .homedoop-header-home {
+    padding: 12px 8px;
+  }
+
+  .homedoop-text-2xl {
+    font-size: 1.4rem;
+  }
+
+  .homedoop-nav-menu ul {
+    gap: 10px;
+  }
+
+  .homedoop-nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .homedoop-signin-button,
+  .homedoop-register-button {
+    width: 80px;
+    height: 28px;
+    font-size: 13px;
+    padding: 4px;
+  }
+}
+
 @media (min-width: 769px) {
   .homedoop-nav-menu {
     display: flex;
@@ -520,10 +722,6 @@ body {
     border-radius: 4px;
   }
 
-  .homedoop-dropdown-button {
-    margin-right: 8px;
-  }
-
   .homedoop-dropdown-menu {
     top: 60px;
     right: 8px;
@@ -533,7 +731,7 @@ body {
 
   .homedoop-hero-section {
     min-height: calc(100vh - 60px);
-    top: 0px;
+    top: 60px;
   }
 
   .homedoop-hero-overlay {
@@ -563,8 +761,9 @@ body {
   }
 
   .homedoop-section {
-    padding: 32px 12px;
-    scroll-margin-top: 60px;
+    padding: 80px 12px 32px;
+    margin-top: 40px;
+    scroll-margin-top: 80px;
   }
 
   .homedoop-section-title {
@@ -606,7 +805,8 @@ body {
   }
 
   .homedoop-feedback-icon {
-    font-size: 32px;
+    width: 32px;
+    height: 32px;
     margin-bottom: 6px;
   }
 
@@ -643,7 +843,6 @@ body {
 
   .homedoop-social-card {
     width: 100px;
-    max-width: 120px;
     padding: 12px;
   }
 
@@ -657,16 +856,15 @@ body {
     font-size: 12px;
   }
 
-  /* Toastify Overrides for Mobile */
   .Toastify__toast {
-    max-width: 260px;
+    top: 76px !important;
+    width: 280px;
     font-size: 12px;
     padding: 6px;
   }
 
   .Toastify__toast-body {
     font-size: 12px;
-    padding-right: 24px; /* Adjusted for close button */
   }
 
   .Toastify__toast-icon {
@@ -675,8 +873,6 @@ body {
   }
 
   .Toastify__close-button {
-    top: 6px;
-    right: 6px;
     width: 18px;
     height: 18px;
   }
@@ -689,7 +885,6 @@ body {
 
   .homedoop-text-2xl {
     font-size: 1.25rem;
-    margin-right: 12px;
   }
 
   .homedoop-mobile-menu {
@@ -707,10 +902,6 @@ body {
     border-radius: 3px;
   }
 
-  .homedoop-dropdown-button {
-    margin-right: 6px;
-  }
-
   .homedoop-dropdown-menu {
     top: 56px;
     right: 6px;
@@ -725,7 +916,7 @@ body {
 
   .homedoop-hero-section {
     min-height: calc(100vh - 56px);
-    top: 0px;
+    top: 56px;
   }
 
   .homedoop-hero-overlay {
@@ -755,8 +946,9 @@ body {
   }
 
   .homedoop-section {
-    padding: 24px 8px;
-    scroll-margin-top: 56px;
+    padding: 80px 8px 24px;
+    margin-top: 40px;
+    scroll-margin-top: 80px;
   }
 
   .homedoop-section-title {
@@ -798,7 +990,8 @@ body {
   }
 
   .homedoop-feedback-icon {
-    font-size: 28px;
+    width: 28px;
+    height: 28px;
     margin-bottom: 4px;
   }
 
@@ -835,7 +1028,6 @@ body {
 
   .homedoop-social-card {
     width: 90px;
-    max-width: 100px;
     padding: 10px;
   }
 
@@ -849,16 +1041,15 @@ body {
     font-size: 11px;
   }
 
-  /* Toastify Overrides for Smaller Screens */
   .Toastify__toast {
-    max-width: 220px;
+    top: 72px !important;
+    width: 240px;
     font-size: 11px;
     padding: 5px;
   }
 
   .Toastify__toast-body {
     font-size: 11px;
-    padding-right: 22px; /* Adjusted for close button */
   }
 
   .Toastify__toast-icon {
@@ -867,44 +1058,44 @@ body {
   }
 
   .Toastify__close-button {
-    top: 5px;
-    right: 5px;
     width: 16px;
     height: 16px;
   }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 375px) {
   .homedoop-header-home {
-    padding: 8px 10px;
+    padding: 8px 8px;
   }
 
   .homedoop-text-2xl {
     font-size: 1.1rem;
-    margin-right: 8px;
   }
 
   .homedoop-mobile-menu {
-    gap: 3px;
+    gap: 6px;
     padding-right: 4px;
+    margin-left: 8px;
   }
 
   .homedoop-signin-button,
   .homedoop-register-button,
   .homedoop-dropdown-button {
-    width: 70px;
-    height: 26px;
+    width: 60px;
+    height: 24px;
     padding: 2px;
-    font-size: 10px;
+    font-size: 9px;
     border-radius: 3px;
   }
 
-  .homedoop-dropdown-button {
-    margin-right: 4px;
+  .homedoop-signin-button:hover,
+  .homedoop-register-button:hover,
+  .homedoop-dropdown-button:hover {
+    transform: scale(1.05);
   }
 
   .homedoop-dropdown-menu {
-    top: 52px;
+    top: 48px;
     right: 4px;
     width: 140px;
     padding: 3px;
@@ -916,8 +1107,8 @@ body {
   }
 
   .homedoop-hero-section {
-    min-height: calc(100vh - 52px);
-    top: 0px;
+    min-height: calc(100vh - 48px);
+    top: 48px;
   }
 
   .homedoop-hero-overlay {
@@ -947,8 +1138,9 @@ body {
   }
 
   .homedoop-section {
-    padding: 20px 6px;
-    scroll-margin-top: 52px;
+    padding: 80px 6px 20px;
+    margin-top: 40px;
+    scroll-margin-top: 80px;
   }
 
   .homedoop-section-title {
@@ -989,7 +1181,8 @@ body {
   }
 
   .homedoop-feedback-icon {
-    font-size: 24px;
+    width: 24px;
+    height: 24px;
     margin-bottom: 4px;
   }
 
@@ -1026,7 +1219,6 @@ body {
 
   .homedoop-social-card {
     width: 80px;
-    max-width: 90px;
     padding: 8px;
   }
 
@@ -1040,16 +1232,16 @@ body {
     font-size: 10px;
   }
 
-  /* Toastify Overrides for Very Small Screens */
   .Toastify__toast {
-    max-width: 200px;
+    top: 64px !important;
+    width: 220px;
     font-size: 10px;
-    padding: 4px;
+    padding: 6px 20px 6px 6px;
   }
 
   .Toastify__toast-body {
     font-size: 10px;
-    padding-right: 20px; /* Adjusted for close button */
+    padding-right: 20px;
   }
 
   .Toastify__toast-icon {
@@ -1058,9 +1250,216 @@ body {
   }
 
   .Toastify__close-button {
-    top: 4px;
-    right: 4px;
     width: 14px;
     height: 14px;
+    right: 5px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 320px) {
+  .homedoop-header-home {
+    padding: 8px 8px;
+  }
+
+  .homedoop-text-2xl {
+    font-size: 1rem;
+  }
+
+  .homedoop-mobile-menu {
+    gap: 6px;
+    padding-right: 4px;
+    margin-left: 8px;
+  }
+
+  .homedoop-signin-button,
+  .homedoop-register-button,
+  .homedoop-dropdown-button {
+    width: 60px;
+    height: 24px;
+    padding: 2px;
+    font-size: 9px;
+    border-radius: 3px;
+  }
+
+  .homedoop-dropdown-menu {
+    top: 48px;
+    right: 4px;
+    width: 140px;
+    padding: 3px;
+  }
+
+  .homedoop-dropdown-link {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .homedoop-hero-section {
+    min-height: calc(100vh - 48px);
+    top: 48px;
+  }
+
+  .homedoop-hero-overlay {
+    padding: 10px;
+    max-width: 100%;
+  }
+
+  .homedoop-welcome-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .homedoop-hero-title {
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+
+  .homedoop-hero-text {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  .homedoop-hero-button {
+    margin-top: 8px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .homedoop-section {
+    padding: 80px 6px 20px;
+    margin-top: 40px;
+    scroll-margin-top: 80px;
+  }
+
+  .homedoop-section-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .homedoop-card-container {
+    gap: 8px;
+    padding: 8px;
+    max-width: 300px;
+  }
+
+  .homedoop-card {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .homedoop-card-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-card h4 {
+    font-size: 12px;
+    margin: 2px 0;
+  }
+
+  .homedoop-card p {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+
+  .homedoop-feedback-container {
+    padding: 10px;
+    max-width: 280px;
+  }
+
+  .homedoop-feedback-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-feedback-input {
+    min-height: 40px;
+    padding: 3px;
+    font-size: 10px;
+  }
+
+  .homedoop-feedback-text {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  .homedoop-feedback-button {
+    margin-top: 6px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .homedoop-footer-home {
+    padding: 10px 6px;
+    margin-top: 12px;
+  }
+
+  .homedoop-footer-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .homedoop-social-cards {
+    gap: 6px;
+  }
+
+  .homedoop-social-card {
+    width: 80px;
+    padding: 8px;
+  }
+
+  .homedoop-social-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+
+  .homedoop-social-card p {
+    font-size: 10px;
+  }
+
+  .Toastify__toast {
+    top: 64px !important;
+    width: 220px;
+    font-size: 10px;
+    padding: 6px 20px 6px 6px;
+  }
+
+  .Toastify__toast-body {
+    font-size: 10px;
+    padding-right: 20px;
+  }
+
+  .Toastify__toast-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .Toastify__close-button {
+    width: 14px;
+    height: 14px;
+    right: 5px;
+    font-size: 12px;
+  }
+}
+
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+  .homedoop-text-2xl:hover,
+  .homedoop-nav-link:hover,
+  .homedoop-signin-button:hover,
+  .homedoop-register-button:hover,
+  .homedoop-dropdown-button:hover,
+  .homedoop-hero-button:hover,
+  .homedoop-card:hover,
+  .homedoop-feedback-button:hover,
+  .homedoop-social-card:hover,
+  .homedoop-social-card::before {
+    animation: none;
+    transition: none;
+    transform: none;
+    box-shadow: none;
   }
 }

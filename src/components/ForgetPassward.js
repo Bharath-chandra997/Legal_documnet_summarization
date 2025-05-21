@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,11 +7,33 @@ import "./ForgetPassword.css";
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine); // Initial network state
   const navigate = useNavigate();
+
+  // Handle offline/online detection
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    // Add event listeners
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!email) {
       toast.error('Please enter your email address', {
         position: "top-right",
@@ -25,6 +47,11 @@ const ForgetPassword = () => {
       return;
     }
 
+    if (!navigator.onLine) {
+      setIsOffline(true); // Ensure banner is shown
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await fetch("http://localhost:8080/auth/ForgetPassword", {
@@ -32,7 +59,7 @@ const ForgetPassword = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      
+
       const result = await response.json();
       if (response.ok) {
         localStorage.setItem("resetEmail", email);
@@ -47,7 +74,7 @@ const ForgetPassword = () => {
         });
         setTimeout(() => navigate("/ResetOtp", { state: { email } }), 1000);
       } else {
-        toast.error("Failed to send OTP", {
+        toast.error(result.message || "Failed to send OTP", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -72,6 +99,10 @@ const ForgetPassword = () => {
     }
   };
 
+  const handleDismissOffline = () => {
+    setIsOffline(false);
+  };
+
   return (
     <div className="forgot-password-container">
       <ToastContainer
@@ -85,24 +116,38 @@ const ForgetPassword = () => {
         draggable
         pauseOnHover
       />
-      
+
+      {/* Custom Offline Notification */}
+      {isOffline && (
+        <div className="offline-banner" role="alert">
+          <span>You are offline. Please check your internet connection.</span>
+          <button
+            className="offline-banner-close"
+            onClick={handleDismissOffline}
+            aria-label="Dismiss offline notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <div className="forgetcard">
         <div className="forgetimage-container"></div>
-        
+
         <div className="forgetform-container">
-          <h1 className='forgetheadingH1'>Forgot Password</h1>
+          <h1 className="forgetheadingH1">Forgot Password</h1>
           <p>Enter your email to receive a reset OTP</p>
           <div className="forgetinput-container">
-            <input 
-              type="email" 
-              placeholder="Enter your email" 
+            <input
+              type="email"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
             />
           </div>
-          <button 
-            className="forgetreset-button" 
+          <button
+            className="forgetreset-button"
             onClick={handleSubmit}
             disabled={isLoading}
           >

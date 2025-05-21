@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { FiUpload, FiZap, FiX, FiCheck, FiFile, FiCopy, FiSend, FiDownload, FiChevronDown, FiEdit } from 'react-icons/fi';
+import { FiUpload, FiZap, FiX, FiCheck, FiFile, FiCopy, FiSend, FiDownload, FiChevronDown, FiEdit, FiArrowLeft } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import './Summarization.css';
@@ -247,6 +247,10 @@ function Summarization() {
     navigate('/NotesApp');
   };
 
+  const handleBackClick = () => {
+    navigate('/ModelsPage'); // Navigate to the model page
+  };
+
   useEffect(() => {
     if (summaryText && language !== 'english') {
       translateSummary();
@@ -316,10 +320,22 @@ function Summarization() {
     }
   };
 
-  const sparkleColors = ['#FFD700', '#FF1493', '#00BFFF', '#7CFC00', '#FFA500'];
+  const sparkleColors = ['#26A69A', '#FF6F61', '#FFD54F', '#4FC3F7', '#AB47BC'];
 
   return (
     <div className="summary-mainPage">
+      {/* Back Button */}
+      <motion.button
+        className="summary-back-btn"
+        onClick={handleBackClick}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ duration: 0.2 }}
+        aria-label="Back to model page"
+      >
+        <FiArrowLeft className="summary-back-icon" />
+      </motion.button>
+
       {apiStatus && apiStatus.status === 'unreachable' && (
         <motion.div
           className="summary-api-warning"
@@ -336,10 +352,10 @@ function Summarization() {
           className="summary-file-upload-box"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         >
-          <h3>Legal Document Summarization</h3>
-          <p>AI-powered analysis of your legal documents</p>
+          <h3>Legal Document Summarizer</h3>
+          <p>Upload your document for AI-powered insights</p>
 
           <div
             className={`summary-upload-area ${isDragging ? 'dragging' : ''} ${isComplete ? 'complete' : ''}`}
@@ -352,29 +368,33 @@ function Summarization() {
               {isComplete ? (
                 <motion.div
                   key="complete"
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="summary-complete-state"
                 >
                   <div className="summary-checkmark-circle">
                     <FiCheck className="summary-checkmark" />
                   </div>
-                  <p>Processing complete!</p>
+                  <p>Analysis Complete!</p>
                   <motion.button
                     className="summary-reset-btn"
                     onClick={resetProcess}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    Process another document
+                    Start New Analysis
                   </motion.button>
                 </motion.div>
               ) : selectedFile ? (
                 <motion.div
                   key="file-preview"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="summary-file-preview"
                 >
                   <div className="summary-file-info">
@@ -386,6 +406,7 @@ function Summarization() {
                     onClick={handleRemoveFile}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <FiX />
                   </motion.button>
@@ -393,12 +414,14 @@ function Summarization() {
               ) : (
                 <motion.div
                   key="upload-prompt"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="summary-upload-prompt"
                 >
                   <FiUpload className="summary-upload-icon" />
-                  <p>{isDragging ? 'Drop your document here' : 'Drag and drop your legal documents'}</p>
+                  <p>{isDragging ? 'Drop your file here' : 'Drag & drop your document'}</p>
                   <small>or</small>
                 </motion.div>
               )}
@@ -416,14 +439,15 @@ function Summarization() {
                   className="summary-btn-icon-wrapper"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <FiUpload className="summary-btn-icon" />
                 </motion.div>
-                Browse files
+                Select File
               </label>
             )}
 
-            <p className="summary-file-types">Supported: PDF, DOC, DOCX, TXT</p>
+            <p className="summary-file-types">Supports: PDF, DOC, DOCX, TXT</p>
           </div>
 
           <AnimatePresence>
@@ -435,22 +459,24 @@ function Summarization() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
                 whileHover={
                   !isGenerating
                     ? {
                         scale: 1.05,
-                        boxShadow: '0 5px 15px rgba(99, 102, 241, 0.4)',
+                        boxShadow: '0 8px 24px rgba(38, 166, 154, 0.6)',
                       }
                     : {}
                 }
-                whileTap={!isGenerating ? { scale: 0.98 } : {}}
+                whileTap={!isGenerating ? { scale: 0.95 } : {}}
                 onHoverStart={() => setButtonHover(true)}
                 onHoverEnd={() => setButtonHover(false)}
+                aria-label="Analyze document now"
               >
                 {isGenerating ? (
                   <>
                     <div className="summary-sparkle-container">
-                      {[...Array(8)].map((_, i) => (
+                      {[...Array(5)].map((_, i) => (
                         <motion.span
                           key={i}
                           className="summary-sparkle"
@@ -458,49 +484,36 @@ function Summarization() {
                             backgroundColor: sparkleColors[i % sparkleColors.length],
                           }}
                           animate={{
-                            x: [0, (Math.random() - 0.5) * 30],
-                            y: [0, (Math.random() - 0.5) * 30],
+                            scale: [0.5, 1, 0.5],
                             opacity: [0, 1, 0],
-                            scale: [0.5, 1.2, 0.5],
+                            x: (Math.random() - 0.5) * 20,
+                            y: (Math.random() - 0.5) * 20,
                           }}
                           transition={{
-                            duration: 1.5,
+                            duration: 1.2,
                             repeat: Infinity,
-                            delay: Math.random() * 0.5,
+                            delay: i * 0.2,
+                            ease: 'easeInOut',
                           }}
                         />
                       ))}
                     </div>
-                    <span>Processing...</span>
+                    <span>Analyzing...</span>
                   </>
                 ) : (
                   <>
                     <motion.div
                       animate={{
-                        rotate: buttonHover ? [0, 10, -10, 0] : 0,
-                        scale: buttonHover ? [1, 1.2, 1] : 1,
+                        scale: buttonHover ? 1.2 : 1,
                       }}
                       transition={{
-                        duration: 0.5,
-                        repeat: buttonHover ? Infinity : 0,
-                        repeatType: 'mirror',
+                        duration: 0.3,
+                        ease: 'easeInOut',
                       }}
                     >
                       <FiZap className="summary-btn-icon" />
                     </motion.div>
-                    <motion.span
-                      animate={{
-                        backgroundPosition: buttonHover ? '100% 0' : '0 0',
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        repeatType: 'reverse',
-                      }}
-                      className="summary-gradient-text"
-                    >
-                      Generate Summary
-                    </motion.span>
+                    <span>Analyze Now</span>
                   </>
                 )}
               </motion.button>
@@ -512,25 +525,31 @@ function Summarization() {
           {showSummaryResult && (
             <motion.div
               className="summary-result-card"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
             >
               <div className="summary-result-header">
-                <h4>Document Summary</h4>
+                <h4>Summary</h4>
                 <div className="summary-actions">
                   <div className="summary-language-select">
-                    <motion.div className="language-select-wrapper" whileHover={{ scale: 1.02 }}>
+                    <motion.div className="language-select-wrapper" whileHover={{ scale: (!isComplete || isGenerating) ? 1 : 1.03 }}>
                       <div
-                        className="language-select-trigger"
-                        onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                        className={`language-select-trigger ${(!isComplete || isGenerating) ? 'disabled' : ''}`}
+                        onClick={() => {
+                          if (isComplete && !isGenerating) {
+                            setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
+                          }
+                        }}
+                        aria-disabled={!isComplete || isGenerating}
+                        title={!isComplete || isGenerating ? 'Please wait until analysis is complete' : 'Select language'}
                       >
                         <span>{languageOptions.find((l) => l.value === language)?.flag}</span>
                         <span>{languageOptions.find((l) => l.value === language)?.label}</span>
                         <motion.div
                           animate={{ rotate: isLanguageDropdownOpen ? 180 : 0 }}
-                          transition={{ duration: 0.2 }}
+                          transition={{ duration: 0.2, ease: 'easeOut' }}
                         >
                           <FiChevronDown />
                         </motion.div>
@@ -539,10 +558,10 @@ function Summarization() {
                         {isLanguageDropdownOpen && (
                           <motion.div
                             className="language-dropdown"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
                           >
                             {languageOptions.map((option) => (
                               <div
@@ -566,22 +585,25 @@ function Summarization() {
                     onClick={downloadSummary}
                     className="summary-download-btn"
                     disabled={!isComplete || isGenerating || error}
-                    title={isComplete && !error ? 'Download summary' : 'Complete summarization to download'}
-                    whileHover={{ scale: isComplete && !error ? 1.1 : 1 }}
-                    whileTap={{ scale: isComplete && !error ? 0.9 : 1 }}
+                    title={isComplete && !error ? 'Download summary' : 'Complete analysis to download'}
+                    whileHover={{ scale: isComplete && !error ? 1.05 : 1 }}
+                    whileTap={{ scale: isComplete && !error ? 0.95 : 1 }}
+                    transition={{ duration: 0.2 }}
                   >
                     {isGenerating ? <div className="summary-spinner"></div> : <FiDownload />}
-                    <span>{isGenerating ? 'Processing...' : 'Download'}</span>
+                    <span>Download</span>
                   </motion.button>
                   <motion.button
                     onClick={copyToClipboard}
                     className="summary-copy-btn"
                     disabled={!summaryText}
                     title="Copy to clipboard"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <FiCopy />
+                    <span>Copy</span>
                   </motion.button>
                 </div>
               </div>
@@ -620,14 +642,15 @@ function Summarization() {
                     onClick={handleNotesClick}
                     className="summary-notes-btn"
                     title="Go to notes"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <FiEdit />
                     Notes
                   </motion.button>
                   <div className="summary-completion-badge">
-                    <FiCheck /> Analysis Complete
+                    <FiCheck /> Complete
                   </div>
                 </div>
               )}
@@ -639,22 +662,28 @@ function Summarization() {
           {isComplete && !error && (
             <motion.div
               className="summary-qa-section"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
             >
-              <h4>Questions & Answers</h4>
+              <h4>Ask Questions</h4>
               {qaHistory.length > 0 ? (
                 <div className="summary-qa-history">
                   {qaHistory.map((qa, index) => (
-                    <div key={index} className="summary-qa-entry">
+                    <motion.div
+                      key={index}
+                      className="summary-qa-entry"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1, ease: 'easeOut' }}
+                    >
                       <span className="summary-qa-question">Q: {qa.question}</span>
                       <div className="summary-qa-answer-card">
                         {qa.loading ? (
                           <div className="summary-qa-loading">
                             <div className="summary-qa-spinner"></div>
-                            Processing your question...
+                            Processing...
                           </div>
                         ) : (
                           <>
@@ -664,9 +693,6 @@ function Summarization() {
                                 <h5>Relevant Sections:</h5>
                                 {qa.relevantSections.map((section, i) => (
                                   <div key={i} className="summary-qa-section">
-                                    <div className="summary-qa-section-score">
-                                      Relevance: {(section.score * 100).toFixed(1)}%
-                                    </div>
                                     <p
                                       className="question-answer"
                                       dangerouslySetInnerHTML={{ __html: section.content }}
@@ -678,35 +704,37 @@ function Summarization() {
                           </>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <p className="summary-qa-placeholder">No questions asked yet.</p>
+                <p className="summary-qa-placeholder">Ask a question to get started.</p>
               )}
               {selectedFile ? (
                 <div className="summary-qa-input-bar">
-                  <textarea
+                  <input
+                    type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     onKeyDown={handleQuestionSubmit}
-                    placeholder="Ask a question about your document..."
+                    placeholder="Ask about your document..."
                     className="summary-qa-input"
-                    rows="4"
                   />
                   <motion.button
                     onClick={handleQuestionSubmit}
                     className="summary-qa-send-btn"
                     disabled={!question.trim()}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                    aria-label="Send question"
                   >
                     <FiSend />
                   </motion.button>
                 </div>
               ) : (
                 <p className="summary-qa-note">
-                  Upload the document again to ask new questions.
+                  Re-upload the document to ask questions.
                 </p>
               )}
             </motion.div>
@@ -719,11 +747,11 @@ function Summarization() {
               className="notification copy-notification"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
             >
               <FiCheck className="notification-icon" />
-              Summary copied to clipboard!
+              Copied to clipboard!
             </motion.div>
           )}
 
@@ -732,8 +760,8 @@ function Summarization() {
               className="notification download-notification"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
             >
               <FiDownload className="notification-icon" />
               Summary downloaded!

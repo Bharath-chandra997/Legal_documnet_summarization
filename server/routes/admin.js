@@ -5,40 +5,129 @@ const BlogPost = require('../model/BlogPost');
 const Feedback = require('../model/Feedback');
 const { verifyAdmin } = require('../Middleware/auth');
 const jwt = require('jsonwebtoken');
+const { startOfDay } = require('date-fns');
 
-// Track user login
-router.post('/track-login', async (req, res) => {
-  try {
-    if (req.user && req.user.isAdmin) {
-      return res.status(200).json({ success: true, message: 'Admin login not tracked' });
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const stats = await UserLoginStats.findOneAndUpdate(
-      { date: today },
-      { $inc: { count: 1 } },
-      { upsert: true, new: true }
-    );
-    console.log("Updated stats for non-admin user:", stats);
-    res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("Track login error:", error.message);
-    res.status(500).json({ success: false, error: 'Server error' });
-  }
-});
-
-// Get login statistics
+// Get login statistics (for graph)
 router.get('/login-stats', verifyAdmin, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: 'Start and end dates are required' });
+    }
+
+    const start = startOfDay(new Date(startDate));
+    const end = new Date(startOfDay(new Date(endDate)).getTime() + 24 * 60 * 60 * 1000 - 1);
+
+    console.log('Querying login-stats:', {
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+    });
+
     const stats = await UserLoginStats.find({
-      date: { $gte: new Date(startDate), $lte: new Date(endDate) }
-    }).sort({ date: 1 });
+      createdAt: {
+        $gte: start,
+        $lte: end,
+      },
+    }).sort({ createdAt: 1 });
+
+    console.log('Fetched login-stats:', {
+      startDate: start.toISOString().split('T')[0],
+      endDate: end.toISOString().split('T')[0],
+      stats: stats.map(stat => ({
+        date: stat.createdAt.toISOString().split('T')[0],
+        count: stat.count,
+      })),
+    });
+
+    res.json(
+      stats.map(stat => ({
+        date: stat.createdAt.toISOString().split('T')[0],
+        count: stat.count,
+      }))
+    );
+  } catch (error) {
+    console.error('Login stats error:', {
+      message: error.message,
+      stack: error.stack,
+    });
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get user login statistics (for table)
+router.get('/user-login-stats', verifyAdmin, async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: 'Start date and end date are required' });
+    }
+
+    const start = startOfDay(new Date(startDate));
+    const end = new Date(startOfDay(new Date(endDate)).getTime() + 24 * 60 * 60 * 1000 - 1);
+
+    console.log('Querying user-login-stats:', {
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+    });
+
+    const rawStats = await UserLoginStats.find({
+      createdAt: {
+        $gte: start,
+        $lte: end,
+      },
+    }).sort({ createdAt: 1 });
+
+    console.log('Raw stats from MongoDB:', {
+      startDate: start.toISOString().split('T')[0],
+      endDate: end.toISOString().split('T')[0],
+      rawStats: rawStats.map(stat => ({
+        createdAt: stat.createdAt.toISOString(),
+        userLogins: stat.userLogins,
+      })),
+    });
+
+    const stats = await UserLoginStats.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: start,
+            $lte: end,
+          },
+        },
+      },
+      {
+        $unwind: '$userLogins',
+      },
+      {
+        $group: {
+          _id: '$userLogins.email',
+          count: { $sum: '$userLogins.count' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          email: '$_id',
+          count: 1,
+        },
+      },
+      {
+        $sort: { email: 1 },
+      },
+    ]);
+
+    console.log('Fetched user-login-stats:', {
+      startDate: start.toISOString().split('T')[0],
+      endDate: end.toISOString().split('T')[0],
+      stats,
+    });
+
     res.json(stats);
   } catch (error) {
-    console.error(error);
+    console.error('User login stats error:', {
+      message: error.message,
+      stack: error.stack,
+    });
     res.status(500).json({ error: 'Server error' });
   }
 });

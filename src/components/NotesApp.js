@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -16,16 +17,24 @@ const NotesApp = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine); // Initial network state
+  const navigate = useNavigate();
 
   // Load saved notes from API
   useEffect(() => {
     const fetchNotes = async () => {
+      if (!navigator.onLine) {
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
       setError(null);
       try {
         const token = localStorage.getItem('token');
         if (!token) {
           setError('Please log in to view notes.');
+          setIsLoading(false);
           return;
         }
 
@@ -49,6 +58,55 @@ const NotesApp = () => {
     };
 
     fetchNotes();
+  }, []);
+
+  // Handle offline/online detection
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+      setError(''); // Clear error when back online
+      setIsLoading(true); // Trigger reload
+      const fetchNotes = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            setError('Please log in to view notes.');
+            setIsLoading(false);
+            return;
+          }
+
+          const response = await axios.get('/api/notes', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          setNotes(response.data.notes || []);
+        } catch (err) {
+          const errorMsg = err.response?.data?.error || 'Failed to load notes. Please try again.';
+          setError(errorMsg);
+          if (err.response?.status === 401 && err.response?.data?.error.includes('expired')) {
+            localStorage.removeItem('token');
+            window.location.href = '/signin';
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchNotes();
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const handleNewNote = () => {
@@ -184,10 +242,39 @@ const NotesApp = () => {
     return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const handleDismissOffline = () => {
+    setIsOffline(false);
+  };
+
   return (
     <div className="notes-app">
+      {/* Custom Offline Notification */}
+      {isOffline && (
+        <div className="offline-banner" role="alert">
+          <span>You are offline. Please check your internet connection.</span>
+          <button
+            className="offline-banner-close"
+            onClick={handleDismissOffline}
+            aria-label="Dismiss offline notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <header className="notes-header">
-        <h1 className="notes-title">LExiMinD Notepad</h1>
+        <div className="notes-header-left">
+          <span
+            onClick={() => navigate('/dash')}
+            className="notes-back-link"
+            aria-label="Back to Dashboard"
+          >
+            ← Back
+          </span>
+        </div>
+        <div className="notes-header-center">
+          <h1 className="notes-title">LExiMinD Notepad</h1>
+        </div>
         <div className="notes-header-actions">
           <input
             type="text"
@@ -286,7 +373,7 @@ const NotesApp = () => {
           </div>
         ) : (
           <div className="notes-empty">
-            {searchTerm ? 'No matching notes found' : 'No notes yet. Create your first note!'}
+            {searchTerm ? 'No matching notes found.' : 'No notes yet. Create your first note!'}
           </div>
         )}
       </main>

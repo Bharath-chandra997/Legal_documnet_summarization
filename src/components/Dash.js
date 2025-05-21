@@ -6,8 +6,7 @@ import {
   Lightbulb, Facebook, Twitter, Instagram,
   Linkedin, User, LogOut, Notebook
 } from "lucide-react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 import "./Dash.css";
 import axios from 'axios';
 
@@ -22,7 +21,7 @@ const decodeJWT = (token) => {
   }
 };
 
-export default function Dash() {
+function DashContent() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [feedback, setFeedback] = useState('');
@@ -31,7 +30,9 @@ export default function Dash() {
     email: "user@example.com",
   });
   const [hasNewBlog, setHasNewBlog] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const getImageSrc = (size = "") => {
     const storedImage = localStorage.getItem("image");
@@ -88,6 +89,10 @@ export default function Dash() {
     }
 
     const checkNewBlogs = async () => {
+      if (!navigator.onLine) {
+        return;
+      }
+
       try {
         const response = await axios.get('http://localhost:8080/api/blog-posts', {
           params: { limit: 1, sort: '-createdAt' }
@@ -99,10 +104,29 @@ export default function Dash() {
           setHasNewBlog(true);
         }
       } catch (error) {
+        // Silently fail
       }
     };
 
     checkNewBlogs();
+  }, []);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
   }, []);
 
   const closeMenu = () => setMenuOpen(false);
@@ -111,25 +135,28 @@ export default function Dash() {
     localStorage.clear();
     navigate("/");
     setProfileOpen(false);
-    toast.info("You have been logged out", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
+    enqueueSnackbar("You have been logged out", {
+      variant: 'info',
+      anchorOrigin: { vertical: 'top', horizontal: 'right' },
+      autoHideDuration: 5000,
     });
   };
 
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) {
-      toast.error("Feedback cannot be empty!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
+      enqueueSnackbar("Feedback cannot be empty!", {
+        variant: 'error',
+        anchorOrigin: { vertical: 'top', horizontal: 'right' },
+        autoHideDuration: 5000,
+      });
+      return;
+    }
+
+    if (!navigator.onLine) {
+      enqueueSnackbar("You are offline. Please check your internet connection.", {
+        variant: 'error',
+        anchorOrigin: { vertical: 'top', horizontal: 'right' },
+        autoHideDuration: 5000,
       });
       return;
     }
@@ -146,32 +173,68 @@ export default function Dash() {
         }
       );
 
-      toast.success("Feedback submitted successfully!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
+      enqueueSnackbar("Feedback submitted successfully!", {
+        variant: 'success',
+        anchorOrigin: { vertical: 'top', horizontal: 'right' },
+        autoHideDuration: 5000,
       });
       setFeedback('');
     } catch (error) {
-      toast.error("Failed to submit feedback. Please try again.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
+      enqueueSnackbar("Failed to submit feedback. Please try again.", {
+        variant: 'error',
+        anchorOrigin: { vertical: 'top', horizontal: 'right' },
+        autoHideDuration: 5000,
       });
+    }
+  };
+
+  const handleDismissOffline = () => {
+    setIsOffline(false);
+  };
+
+  const handleUploadCardClick = (e) => {
+    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+      navigate("/Summarization");
+    }
+  };
+
+  const handleUploadCardKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate("/Summarization");
+    }
+  };
+
+  const handleQACardClick = (e) => {
+    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+      navigate("/QAPage");
+    }
+  };
+
+  const handleQACardKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate("/QAPage");
     }
   };
 
   return (
     <div className="dash-container">
-      <ToastContainer />
+      {isOffline && (
+        <div className="offline-banner animate-slide-in-right" role="alert">
+          <span>You are offline. Please check your internet connection.</span>
+          <button
+            className="offline-banner-close"
+            onClick={handleDismissOffline}
+            aria-label="Dismiss offline notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <header className="dash-header">
-        <h1 className="dash-logo">LExiMinD</h1>
+        <h1 className="dash-logo">LexiMind</h1>
         <nav className="dash-desktop-nav">
           <ul className="dash-nav-list">
             <li><a href="#dash-hero" className="dash-nav-link">Home</a></li>
@@ -206,7 +269,7 @@ export default function Dash() {
                 </div>
               </button>
               {profileOpen && (
-                <div className={`dash-profile-dropdown ${profileOpen ? 'dash-dropdown-open' : ''}`}>
+                <div className={`dash-profile-dropdown animate-flip-in ${profileOpen ? 'dash-dropdown-open' : ''}`}>
                   <div className="dash-profile-info">
                     <img
                       src={getImageSrc('&size=128')}
@@ -264,18 +327,18 @@ export default function Dash() {
               </div>
             </button>
             {profileOpen && (
-              <div className={`dash-profile-dropdown ${profileOpen ? 'dash-dropdown-open' : ''}`}>
+              <div className={`dash-profile-dropdown animate-flip-in ${profileOpen ? 'dash-dropdown-open' : ''}`}>
                 <div className="dash-profile-info">
                   <img
                     src={getImageSrc('&size=128')}
                     alt="Profile"
                     className="dash-profile-large-image"
                     onError={(e) => {
-                      const name = localStorage.getItem("username") || "User";
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        name
-                      )}&background=random&size=128`;
-                    }}
+                        const name = localStorage.getItem("username") || "User";
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          name
+                        )}&background=random&size=128`;
+                      }}
                   />
                   <p className="dash-profile-name">{userData.name}</p>
                   <p className="dash-profile-email">{userData.email}</p>
@@ -309,101 +372,118 @@ export default function Dash() {
         </div>
       </header>
       {menuOpen && (
-        <div className={`dash-mobile-menu ${menuOpen ? 'dash-menu-open' : ''}`}>
+        <div className={`dash-mobile-menu animate-slide-down ${menuOpen ? 'dash-menu-open' : ''}`}>
           <ul className="dash-mobile-menu-list">
-            <li><a href="#dash-hero" className="dash-mobile-menu-link" onClick={closeMenu}>Home</a></li>
-            <li><a href="#dash-how-it-works" className="dash-mobile-menu-link" onClick={closeMenu}>How It Works</a></li>
-            <li><a href="#dash-about" className="dash-mobile-menu-link" onClick={closeMenu}>About Us</a></li>
+            <li><a href="#dash-hero" className="dash-mobile-menu-link animate-stagger" onClick={closeMenu}>Home</a></li>
+            <li><a href="#dash-how-it-works" className="dash-mobile-menu-link animate-stagger" onClick={closeMenu}>How It Works</a></li>
+            <li><a href="#dash-about" className="dash-mobile-menu-link animate-stagger" onClick={closeMenu}>About Us</a></li>
             <li className="dash-nav-item">
-              <Link to="/blog" className="dash-mobile-menu-link" onClick={closeMenu}>
+              <Link to="/blog" className="dash-mobile-menu-link animate-stagger" onClick={closeMenu}>
                 Blog
                 {hasNewBlog && <span className="dash-notification-dot"></span>}
               </Link>
             </li>
-            <li><a href="#dash-feedback" className="dash-mobile-menu-link" onClick={closeMenu}>Feedback</a></li>
+            <li><a href="#dash-feedback" className="dash-mobile-menu-link animate-stagger" onClick={closeMenu}>Feedback</a></li>
           </ul>
         </div>
       )}
       <section id="dash-hero" className="dash-hero">
-        <div className="dash-hero-overlay">
-          <h1 className="dash-welcome-title">Welcome to LexiMind</h1>
+        <div className="dash-hero-overlay animate-scale-in">
+          <h1 className="dash-welcome-title animate-typewriter">Welcome to LexiMind</h1>
           <h2 className="dash-hero-title">Summarize Legal Documents Instantly with Our Website</h2>
           <p className="dash-hero-text">Save time and get precise legal document summaries in seconds.</p>
-          <button className="dash-hero-button dash-button-hover"
-            onClick={() => navigate("/ModelsPage")}>Get Started</button>
+          <button className="dash-hero-button dash-button-hover" onClick={() => navigate("/ModelsPage")} aria-label="Get Started">
+            Get Started
+          </button>
         </div>
       </section>
       <section id="dash-how-it-works" className="dash-section">
-        <h3 className="dash-section-title">How It Works</h3>
-        <div className="dash-card-container">
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <Upload size={48} className="dash-card-icon" />
+        <h3 className="dash-section-title animate-reveal">How It Works</h3>
+        <div className="dash-info-container">
+          <div
+            className="dash-info-block dash-info-block-clickable animate-bounce-in"
+            style={{ animationDelay: '0.2s' }}
+            onClick={handleUploadCardClick}
+            onKeyDown={handleUploadCardKeyDown}
+            role="button"
+            tabIndex={0}
+            aria-label="Navigate to Summarization page"
+          >
+            <div className="dash-info-icon-container">
+              <Upload size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">Upload Document</h4>
-            <p className="dash-card-text">Simply upload your legal document in any format</p>
+            <h4 className="dash-info-title">Upload Document</h4>
+            <p className="dash-info-text">Easily upload your legal documents in any format to begin the summarization process.</p>
           </div>
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <FileText size={48} className="dash-card-icon" />
+          <div className="dash-info-block animate-bounce-in" style={{ animationDelay: '0.3s' }}>
+            <div className="dash-info-icon-container">
+              <FileText size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">AI Processing</h4>
-            <p className="dash-card-text">Our advanced AI analyzes and summarizes your document to streamline your workflow</p>
+            <h4 className="dash-info-title">AI Processing</h4>
+            <p className="dash-info-text">Our advanced AI technology analyzes and generates concise summaries to streamline your workflow.</p>
           </div>
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <Download size={48} className="dash-card-icon" />
+          <div className="dash-info-block animate-bounce-in" style={{ animationDelay: '0.4s' }}>
+            <div className="dash-info-icon-container">
+              <Download size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">Get Results</h4>
-            <p className="dash-card-text">Download your concise summary in multiple formats</p>
+            <h4 className="dash-info-title">Get Results</h4>
+            <p className="dash-info-text">Download your summarized document in multiple formats for easy access and sharing.</p>
           </div>
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <HelpCircle size={48} className="dash-card-icon" />
+          <div
+            className="dash-info-block dash-info-block-clickable animate-bounce-in"
+            style={{ animationDelay: '0.5s' }}
+            onClick={handleQACardClick}
+            onKeyDown={handleQACardKeyDown}
+            role="button"
+            tabIndex={0}
+            aria-label="Navigate to QA page"
+          >
+            <div className="dash-info-icon-container">
+              <HelpCircle size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">Ask Questions</h4>
-            <p className="dash-card-text">Interact with our AI to get specific answers about your document</p>
+            <h4 className="dash-info-title">Ask Questions</h4>
+            <p className="dash-info-text">Interact with our AI to get precise answers to specific questions about your document.</p>
           </div>
         </div>
       </section>
       <section id="dash-about" className="dash-section">
-        <h3 className="dash-section-title">About Us</h3>
-        <div className="dash-card-container">
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <BookOpen size={48} className="dash-card-icon" />
+        <h3 className="dash-section-title animate-reveal">About Us</h3>
+        <div className="dash-info-container">
+          <div className="dash-info-block animate-bounce-in" style={{ animationDelay: '0.2s' }}>
+            <div className="dash-info-icon-container">
+              <BookOpen size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">Our Mission</h4>
-            <p className="dash-card-text">To revolutionize legal document analysis through AI-powered technology that saves time and enhances understanding for legal professionals and students alike.</p>
+            <h4 className="dash-info-title">Our Mission</h4>
+            <p className="dash-info-text">To transform legal document analysis with AI, saving time and enhancing clarity for professionals and students.</p>
           </div>
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <Users size={48} className="dash-card-icon" />
+          <div className="dash-info-block animate-bounce-in" style={{ animationDelay: '0.3s' }}>
+            <div className="dash-info-icon-container">
+              <Users size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">Who We Serve</h4>
-            <p className="dash-card-text">Law firms, corporate legal departments, law students, and anyone who needs to quickly understand complex legal documents without compromising accuracy.</p>
+            <h4 className="dash-info-title">Who We Serve</h4>
+            <p className="dash-info-text">Law firms, corporate legal teams, law students, and anyone needing quick, accurate document insights.</p>
           </div>
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <ShieldCheck size={48} className="dash-card-icon" />
+          <div className="dash-info-block animate-bounce-in" style={{ animationDelay: '0.4s' }}>
+            <div className="dash-info-icon-container">
+              <ShieldCheck size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">Accuracy & Security</h4>
-            <p className="dash-card-text">Our AI ensures precise legal terminology retention while maintaining the highest standards of data confidentiality and security.</p>
+            <h4 className="dash-info-title">Accuracy & Security</h4>
+            <p className="dash-info-text">Our AI preserves legal terminology and ensures data confidentiality with top-tier security standards.</p>
           </div>
-          <div className="dash-card dash-card-animate">
-            <div className="dash-card-icon-container">
-              <Lightbulb size={48} className="dash-card-icon" />
+          <div className="dash-info-block animate-bounce-in" style={{ animationDelay: '0.5s' }}>
+            <div className="dash-info-icon-container">
+              <Lightbulb size={40} className="dash-info-icon" aria-hidden="true" />
             </div>
-            <h4 className="dash-card-title">Why Choose Us</h4>
-            <p className="dash-card-text">Our specialized legal AI understands context, preserves key legal terminology, and provides insights that generic summarization tools can't match.</p>
+            <h4 className="dash-info-title">Why Choose Us</h4>
+            <p className="dash-info-text">Our legal-specific AI delivers contextual insights and accuracy unmatched by generic tools.</p>
           </div>
         </div>
       </section>
       <section id="dash-feedback" className="dash-section">
-        <h3 className="dash-section-title">Feedback</h3>
-        <div className="dash-feedback-container">
+        <h3 className="dash-section-title animate-reveal">Feedback</h3>
+        <div className="dash-feedback-container animate-slide-up">
           <div className="dash-feedback-icon-container">
-            <MessageSquare size={60} className="dash-feedback-icon" />
+            <MessageSquare size={60} className="dash-feedback-icon animate-pulse" aria-hidden="true" />
           </div>
           <p className="dash-feedback-text">We value your feedback! Let us know how we can improve your experience with LexiMind.</p>
           <textarea
@@ -412,41 +492,52 @@ export default function Dash() {
             rows="5"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
+            aria-label="Feedback input"
           ></textarea>
           <button 
             className="dash-feedback-button dash-button-hover"
             onClick={handleFeedbackSubmit}
+            aria-label="Submit feedback"
           >
             Submit Feedback
           </button>
         </div>
       </section>
-      <footer className="dash-footer">
+      <footer className="dash-footer animate-scale-in">
         <div className="dash-follow-us">
-          <h3 className="dash-footer-title">Follow Us</h3>
+          <h3 className="dash-footer-title animate-reveal">Follow Us</h3>
           <div className="dash-social-cards">
-            <a href="https://www.facebook.com/profile.php?id=61575305309035" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-facebook">
-              <Facebook size={32} className="dash-social-icon" />
+            <a href="https://www.facebook.com/profile.php?id=61575305309035" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-facebook animate-scale-in" style={{ animationDelay: '0.2s' }}>
+              <Facebook size={32} className="dash-social-icon" aria-hidden="true" />
               <p>Facebook</p>
             </a>
-            <a href="https://x.com/Leximind_off" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-twitter">
-              <Twitter size={32} className="dash-social-icon" />
+            <a href="https://x.com/Leximind_off" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-twitter animate-scale-in" style={{ animationDelay: '0.3s' }}>
+              <Twitter size={32} className="dash-social-icon" aria-hidden="true" />
               <p>Twitter</p>
             </a>
-            <a href="https://www.instagram.com/leximind_official?igsh=c3lnODBjeXlhazlw" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-instagram">
-              <Instagram size={32} className="dash-social-icon" />
+            <a href="https://www.instagram.com/leximind_official?igsh=c3lnODBjeXlhazlw" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-instagram animate-scale-in" style={{ animationDelay: '0.4s' }}>
+              <Instagram size={32} className="dash-social-icon" aria-hidden="true" />
               <p>Instagram</p>
             </a>
-            <a href="https://www.linkedin.com/in/leximind1/" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-linkedin">
-              <Linkedin size={32} className="dash-social-icon" />
+            <a href="https://www.linkedin.com/in/leximind1/" target="_blank" rel="noopener noreferrer" className="dash-social-card dash-linkedin animate-scale-in" style={{ animationDelay: '0.5s' }}>
+              <Linkedin size={32} className="dash-social-icon" aria-hidden="true" />
               <p>LinkedIn</p>
             </a>
           </div>
         </div>
-        <div className="dash-footer-bottom">
-          <p className="dash-copyright">© {new Date().getFullYear()} LexiMind. All rights reserved.</p>
-        </div>
       </footer>
     </div>
+  );
+}
+
+export default function Dash() {
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      autoHideDuration={5000}
+    >
+      <DashContent />
+    </SnackbarProvider>
   );
 }

@@ -88,7 +88,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("Google OAuth - Access Token:", accessToken);
         console.log("Google OAuth - Profile:", profile);
         const email = profile.emails[0].value;
         let user = await User.findOne({ email });
@@ -99,6 +98,7 @@ passport.use(
             email,
             image: profile.photos[0].value,
             isVerified: true,
+            isAdmin: false,
           });
           await user.save();
           await sendWelcomeEmail(email, user.username);
@@ -109,7 +109,7 @@ passport.use(
             user.image = profile.photos[0].value;
             await user.save();
           }
-          console.log("Google OAuth - User exists:", email);
+          console.log("Google OAuth - Existing user:", email);
         }
         return done(null, user);
       } catch (error) {
@@ -121,8 +121,100 @@ passport.use(
 );
 
 // Serialize/deserialize user
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+passport.serializeUser((user, done) => {
+  console.log("Serializing user:", user.email);
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    console.log("Deserializing user:", user ? user.email : 'Not found');
+    done(null, user);
+  } catch (error) {
+    console.error("Deserialize error:", error);
+    done(error, null);
+  }
+});
+
+// Track user login
+const trackUserLogin = async (email, isAdmin) => {
+  if (isAdmin) {
+    console.log(`Admin login not tracked for ${email}`);
+    return;
+  }
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const result = await UserLoginStats.findOneAndUpdate(
+      { date: today },
+      {
+        $inc: { count: 1 },
+        $push: {
+          userLogins: {
+            $each: [{ email, count: 1 }],
+            $slice: -1000
+          }
+        },
+        $setOnInsert: { date: today }
+      },
+      { upsert: true, new: true }
+    );
+
+    console.log(`Login tracked for ${email}:`, result);
+  } catch (err) {
+    console.error('Login tracking failed:', err);
+  }
+};
+
+// Google auth route
+const googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+  prompt: "select_account",
+});
+
+// Google callback route
+const googleCallback = async (req, res) => {
+  if (!req.user) {
+    console.error("Google OAuth - No user authenticated");
+    return res.redirect(`${process.env.CLIENT_URL}/signup?status=error&message=no_user`);
+  }
+
+  try {
+    const { username, email, image, isAdmin } = req.user;
+
+    // Track login
+    await trackUserLogin(email, isAdmin);
+
+    const tokenExpiry = isAdmin ? "3h" : "24h";
+    const token = jwt.sign(
+      { 
+        username, 
+        email, 
+        image: image || null, 
+        isAdmin,
+        _id: req.user._id
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: tokenExpiry }
+    );
+
+    // Encode URL parameters to prevent issues with special characters
+    const redirectUrl = new URL(process.env.CLIENT_URL);
+    redirectUrl.searchParams.set('token', token);
+    redirectUrl.searchParams.set('email', email);
+    redirectUrl.searchParams.set('image', encodeURIComponent(image || ''));
+    redirectUrl.searchParams.set('isAdmin', isAdmin.toString());
+
+    console.log("Google OAuth - Redirecting to:", redirectUrl.toString());
+    res.redirect(redirectUrl.toString());
+  } catch (error) {
+    console.error("Google OAuth error:", error.message, error.stack);
+    res.redirect(`${process.env.CLIENT_URL}/signup?status=error&message=server_error`);
+  }
+};
 
 const signup = async (req, res) => {
   try {
@@ -196,6 +288,9 @@ const verifyOTP = async (req, res) => {
     // Send welcome email after verification
     await sendWelcomeEmail(email, user.username);
 
+    // Track login for non-admin users
+    await trackUserLogin(email, user.isAdmin || false);
+
     const token = jwt.sign(
       { 
         username: user.username, 
@@ -206,7 +301,7 @@ const verifyOTP = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-    console.log("OTP verified, user fully registered:", email);
+    console.log("OTP verified, user fully registered and login tracked:", email);
     res.json({ 
       message: "Signup completed", 
       token, 
@@ -226,43 +321,81 @@ const signin = async (req, res) => {
     const user = await User.findOne({ email });
     
     if (!user || !user.isVerified) {
-      console.error("User does not exist or is not verified:", email);
-      return res.status(404).json({ error: "User does not exist or is not verified. Please sign up and verify." });
+      return res.status(404).json({ error: "User not found or not verified" });
     }
     
     if (!(await user.comparePassword(password))) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
+
+    // Track login for non-admin users
     if (!user.isAdmin) {
       try {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        await UserLoginStats.findOneAndUpdate(
+
+        const result = await UserLoginStats.findOneAndUpdate(
           { date: today },
-          { $inc: { count: 1 } },
+          [
+            {
+              // Check if the user exists in userLogins
+              $set: {
+                count: { $add: ["$count", 1] }, // Increment total count
+                userLogins: {
+                  $cond: {
+                    if: {
+                      $in: [email, "$userLogins.email"]
+                    },
+                    then: {
+                      $map: {
+                        input: "$userLogins",
+                        as: "login",
+                        in: {
+                          $cond: {
+                            if: { $eq: ["$$login.email", email] },
+                            then: {
+                              email: "$$login.email",
+                              count: { $add: ["$$login.count", 1] } // Increment count for existing user
+                            },
+                            else: "$$login" // Keep other users unchanged
+                          }
+                        }
+                      }
+                    },
+                    else: {
+                      $concatArrays: [
+                        "$userLogins",
+                        [{ email: email, count: 1 }] // Add new user
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
           { upsert: true, new: true }
         );
-        console.log("Login tracked for non-admin user:", email);
+
+        console.log(`Login tracked for ${email}:`, result);
       } catch (err) {
-        console.error('Login tracking failed:', err.message);
+        console.error('Login tracking failed:', err);
       }
-    } else {
-      console.log("Admin login not tracked for:", email);
     }
 
+    // Generate token and respond
     const tokenExpiry = user.isAdmin ? "3h" : "24h";
     const token = jwt.sign(
       { 
         username: user.username, 
         email, 
         image: user.image || null, 
-        isAdmin: user.isAdmin 
+        isAdmin: user.isAdmin,
+        _id: user._id  // Include user ID for tracking
       },
       process.env.JWT_SECRET,
       { expiresIn: tokenExpiry }
     );
 
-    console.log("Signin successful:", email);
     res.json({ 
       message: "Sign in successful", 
       token, 
@@ -274,62 +407,6 @@ const signin = async (req, res) => {
   } catch (error) {
     console.error("Signin error:", error);
     res.status(500).json({ error: error.message });
-  }
-};
-
-const googleAuth = passport.authenticate("google", {
-  scope: ["profile", "email"],
-  prompt: "select_account",
-});
-
-const googleCallback = async (req, res) => {
-  if (!req.user) {
-    console.error("Google OAuth - No user authenticated");
-    return res.redirect(`${process.env.CLIENT_URL}/signup?status=error`);
-  }
-
-  const { username, email, image } = req.user;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      console.error("Google OAuth - User not found in database:", email);
-      return res.redirect(`${process.env.CLIENT_URL}/signup?status=error`);
-    }
-
-    if (!user.isAdmin) {
-      try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        await UserLoginStats.findOneAndUpdate(
-          { date: today },
-          { $inc: { count: 1 } },
-          { upsert: true, new: true }
-        );
-        console.log("Google OAuth login tracked for non-admin user:", email);
-      } catch (err) {
-        console.error('Login tracking failed:', err.message);
-      }
-    } else {
-      console.log("Google OAuth admin login not tracked for:", email);
-    }
-
-    const tokenExpiry = user.isAdmin ? "3h" : "24h";
-    const token = jwt.sign(
-      { 
-        username, 
-        email, 
-        image: user.image || null, 
-        isAdmin: user.isAdmin 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: tokenExpiry }
-    );
-    console.log("Google OAuth - Redirecting with:", { email, image: user.image });
-    res.redirect(`${process.env.CLIENT_URL}?token=${token}&email=${email}&image=${encodeURIComponent(user.image || '')}`);
-  } catch (error) {
-    console.error("Google OAuth error:", error.message);
-    res.redirect(`${process.env.CLIENT_URL}/signup?status=error`);
   }
 };
 

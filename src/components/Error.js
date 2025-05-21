@@ -1,14 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import './Error.css'; // Import the CSS file
+import './Error.css';
 
 function Error() {
   const navigate = useNavigate();
 
   return (
     <div className="error-container">
-      {/* Floating background elements */}
       <motion.div
         className="floating-circle circle-1"
         animate={{
@@ -36,7 +35,6 @@ function Error() {
         }}
       />
 
-      {/* Main content */}
       <motion.div
         className="error-content"
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
