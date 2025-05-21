@@ -229,7 +229,7 @@ function QAPage() {
   );
 
   const handleBackClick = () => {
-    navigate('/models'); // Navigate to the model page
+    navigate('/ModelsPage'); // Navigate to the model page
   };
 
   return (
